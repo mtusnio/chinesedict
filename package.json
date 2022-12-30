@@ -27,6 +27,6 @@
   "scripts": {
     "lint": "eslint --fix *.js js/options.js js/wordlist.js js/zhuyin.js",
     "csslint": "stylelint css/content.css css/wordlist.css",
-    "zip": "zip -r dictionary.zip ./* -x '*.git*' -x add_jyutping.py -x package.json"
+    "zip": "zip -r dictionary.zip ./* -x '*.git*' -x add_jyutping.py -x package.json -x package-lock.json"
   }
 }

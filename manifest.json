@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Mandarin + Cantonese Dictionary",
   "short_name": "Chinese Dict",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Zhongwen by Christian Schiller, changes by Michal Tusino",
   "homepage_url": "https://github.com/mtusnio/chinesedict",
   "description": "Mandarin & Cantonese dictionary with Pinyin + Jyutping pronunciation",

@@ -81,6 +81,8 @@ your experience.
 - <kbd>C</kbd> on the keyboard to copy the text together with dictionary
   entries into your clipboard. This is useful if you then want to insert them
   into Anki or your own words Spreadsheet.
+- <kbd>E</kbd> to play sound in Cantonese of the selected character or phrase
+- <kbd>W</kbd> to play sound in Mandarin of the selected character or phrase
 
 ## Legal
 This program is free software; you can redistribute it and/or

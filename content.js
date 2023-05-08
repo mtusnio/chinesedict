@@ -889,8 +889,7 @@ function copyToClipboard(data) {
 
 function ttsAny(data, language) {
     // Set the text to be spoken
-    //utterance.text = data; // TODO will test random sentence for now
-    utterance.text = "你好世界"; // Cantonese text
+    utterance.text = data; 
     // Set the language and voice for Mandarin
     utterance.lang = language;
     utterance.voice = synth.getVoices().find((voice) => voice.lang === language);
@@ -899,12 +898,10 @@ function ttsAny(data, language) {
 
 function ttsMandarin(data) {
     ttsAny(data, "zh-CN");
-    showPopup('Speeking in Mandarin', null, -1, -1);
 }
 
 function ttsCantonese(data) {
    ttsAny(data, "zh-HK"); 
-    showPopup('Speeking in Cantonese', null, -1, -1);
 }
 
 function makeHtml(result, showToneColors) {

@@ -83,6 +83,7 @@ your experience.
   into Anki or your own words Spreadsheet.
 - <kbd>E</kbd> to play sound in Cantonese of the selected character or phrase
 - <kbd>W</kbd> to play sound in Mandarin of the selected character or phrase
+  - On Linux: the playing of sound is not able to work with the browsers `Brave`, `Firefox`, and `Chromium` but will work with `Google Chrome`
 
 ## Legal
 This program is free software; you can redistribute it and/or

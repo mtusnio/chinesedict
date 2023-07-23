@@ -84,6 +84,7 @@ your experience.
 - <kbd>E</kbd> to play sound in Cantonese of the selected character or phrase
 - <kbd>W</kbd> to play sound in Mandarin of the selected character or phrase
   - On Linux: the playing of sound is not able to work with the browsers `Brave`, `Firefox`, and `Chromium` but will work with `Google Chrome`
+  - To enable text to speech go to `Extensions` (the jigsaw icon on the top right) > `More actions` (three dots on the right of the `Mandarin + Cantonese` extension) > `Options`. On the `Options` page, scroll to the very bottom and check the box for the option `Enable text-to-speech`. 
 
 ## Legal
 This program is free software; you can redistribute it and/or

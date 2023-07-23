@@ -68,6 +68,7 @@ let zhongwenOptions = window.zhongwenOptions = {
     cantoneseEntriesEnabled: localStorage['cantoneseEntriesEnabled'] || 'yes',
     jyutpingEnabled: localStorage['jyutpingEnabled'] || 'yes',
     pinyinEnabled: localStorage['pinyinEnabled'] || 'yes',
+    ttsEnabled: localStorage['ttsEnabled'] || 'no'
 };
 
 function activateExtension(tabId, showHelp) {

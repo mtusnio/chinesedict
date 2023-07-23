@@ -86,9 +86,6 @@ let zwnj = /\u200c/g;
 // Initialize the speech synthesis object
 let synth = window.speechSynthesis;
 
-// Create a new utterance object
-let utterance = new SpeechSynthesisUtterance();
-
 function enableTab() {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('keydown', onKeyDown);
@@ -152,10 +149,14 @@ function onKeyDown(keyDown) {
             break;
 
 	case 69: // 'e', cantonese tts
-	    ttsCantonese(window.getSelection().toString());
+	    if(config.ttsEnabled=='yes') {
+	    	ttsCantonese(window.getSelection().toString());
+	    }
 	    break;
         case 87: // 'w', mandarin tts
-	    ttsMandarin(window.getSelection().toString());
+	    if(config.ttsEnabled == 'yes') {
+		ttsMandarin(window.getSelection().toString());
+	    }
 	    break;
 
         case 66: // 'b'
@@ -888,6 +889,7 @@ function copyToClipboard(data) {
 }
 
 function ttsAny(data, language) {
+    let utterance = new SpeechSynthesisUtterance();
     // Set the text to be spoken
     utterance.text = data; 
     // Set the language and voice for Mandarin

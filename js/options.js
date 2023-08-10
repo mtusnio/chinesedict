@@ -45,6 +45,9 @@ function loadVals() {
 
     const pinyinEnabled = localStorage['pinyinEnabled'] || 'yes';
     document.querySelector('#pinyinEnabled').checked = pinyinEnabled === 'yes';
+
+    const ttsEnabled = localStorage['pinyinEnabled'] || 'no';
+    document.querySelector('#pinyinEnabled').checked = pinyinEnabled === 'yes';
 }
 
 function setPopupColor(popupColor) {
@@ -117,7 +120,9 @@ window.addEventListener('load', () => {
 
     document.querySelector('#pinyinEnabled').addEventListener('change',
         (event) => setBooleanOption('pinyinEnabled', event.target.checked));
+
+    document.querySelector('#ttsEnabled').addEventListener('change',
+        (event) => setBooleanOption('ttsEnabled', event.target.checked));
 });
 
 loadVals();
-

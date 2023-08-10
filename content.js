@@ -83,6 +83,9 @@ let savedSelEndList = [];
 // regular expression for zero-width non-joiner U+200C &zwnj;
 let zwnj = /\u200c/g;
 
+// Initialize the speech synthesis object
+let synth = window.speechSynthesis;
+
 function enableTab() {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('keydown', onKeyDown);
@@ -144,6 +147,17 @@ function onKeyDown(keyDown) {
         case 67: // 'c'
             copyToClipboard(getTextForClipboard());
             break;
+
+	case 69: // 'e', cantonese tts
+	    if(config.ttsEnabled=='yes') {
+	    	ttsCantonese(window.getSelection().toString());
+	    }
+	    break;
+        case 87: // 'w', mandarin tts
+	    if(config.ttsEnabled == 'yes') {
+		ttsMandarin(window.getSelection().toString());
+	    }
+	    break;
 
         case 66: // 'b'
         {
@@ -374,6 +388,7 @@ function onKeyDown(keyDown) {
                 });
             }
             break;
+	
 
         default:
             return;
@@ -871,6 +886,24 @@ function copyToClipboard(data) {
     });
 
     showPopup('Copied to clipboard', null, -1, -1);
+}
+
+function ttsAny(data, language) {
+    let utterance = new SpeechSynthesisUtterance();
+    // Set the text to be spoken
+    utterance.text = data; 
+    // Set the language and voice for Mandarin
+    utterance.lang = language;
+    utterance.voice = synth.getVoices().find((voice) => voice.lang === language);
+    synth.speak(utterance);
+}
+
+function ttsMandarin(data) {
+    ttsAny(data, "zh-CN");
+}
+
+function ttsCantonese(data) {
+   ttsAny(data, "zh-HK"); 
 }
 
 function makeHtml(result, showToneColors) {

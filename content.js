@@ -1140,6 +1140,10 @@ let miniHelp = `
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
     <tr><td><b>s&nbsp;:</b></td><td>&nbsp;Add word to Skritter queue</td></tr>
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
+    <tr><td><b>e&nbsp;:</b></td><td>&nbsp;Play the Cantonese pronunciation of the selected character or phrase (if enabled in options)</td></tr>
+    <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
+    <tr><td><b>w&nbsp;:</b></td><td>&nbsp;Play the Mandarin pronunciation of the selected character or phrase (if enabled in options)</td></tr>
+    <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
     </table>
     Look up selected text in online resources:
     <table style="margin: 10px;" cellspacing=5 cellpadding=5>

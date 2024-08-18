@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Mandarin + Cantonese Dictionary",
   "short_name": "Chinese Dict",
   "version": "1.1.0",
@@ -11,12 +11,13 @@
     "48": "images/logo-48x48.png",
     "192": "images/logo-128x128.png"
   },
-  "browser_action": {
+  "action": {
     "default_icon": "images/logo-48x48.png",
     "default_title": "Chinese Popup Dictionary"
   },
   "background": {
-    "page": "background.html"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -43,13 +44,8 @@
     "tabs"
   ],
   "commands": {
-    "_execute_browser_action": {
+    "_execute_action": {
       "description": "Enable/Disable Dictionary"
     }
-  },
-  "web_accessible_resources": [
-    "css/*",
-    "js/*",
-    "images/*"
-  ]
+  }
 }

@@ -48,8 +48,6 @@
 
 'use strict';
 
-let config;
-
 let savedTarget;
 
 let savedRangeNode;
@@ -86,6 +84,38 @@ let zwnj = /\u200c/g;
 // Initialize the speech synthesis object
 let synth = window.speechSynthesis;
 
+async function getConfig() {
+    const localStorage = await chrome.storage.local.get([
+        "popupcolor",
+        "tonecolors",
+        "fontSize",
+        "skritterTLD",
+        "zhuyin",
+        "grammar",
+        "simpTrad",
+        "toneColorScheme",
+        "cantoneseEntriesEnabled",
+        "jyutpingEnabled",
+        "pinyinEnabled",
+        "ttsEnabled"
+    ])
+
+    return {
+        css: localStorage['popupcolor'] || 'yellow',
+        tonecolors: localStorage['tonecolors'] || 'yes',
+        fontSize: localStorage['fontSize'] || 'small',
+        skritterTLD: localStorage['skritterTLD'] || 'com',
+        zhuyin: localStorage['zhuyin'] || 'no',
+        grammar: localStorage['grammar'] || 'yes',
+        simpTrad: localStorage['simpTrad'] || 'classic',
+        toneColorScheme: localStorage['toneColorScheme'] || 'standard',
+        cantoneseEntriesEnabled: localStorage['cantoneseEntriesEnabled'] || 'yes',
+        jyutpingEnabled: localStorage['jyutpingEnabled'] || 'yes',
+        pinyinEnabled: localStorage['pinyinEnabled'] || 'yes',
+        ttsEnabled: localStorage['ttsEnabled'] || 'no'
+    };
+}
+
 function enableTab() {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('keydown', onKeyDown);
@@ -111,7 +141,7 @@ function disableTab() {
     clearHighlight();
 }
 
-function onKeyDown(keyDown) {
+async function onKeyDown(keyDown) {
 
     if (keyDown.ctrlKey || keyDown.metaKey) {
         return;
@@ -145,35 +175,35 @@ function onKeyDown(keyDown) {
             break;
 
         case 67: // 'c'
-            copyToClipboard(getTextForClipboard());
+            copyToClipboard(await getTextForClipboard());
             break;
 
-	case 69: // 'e', cantonese tts
-	    if(config.ttsEnabled=='yes') {
-	    	ttsCantonese(window.getSelection().toString());
-	    }
-	    break;
+        case 69: // 'e', cantonese tts
+            if (config.ttsEnabled == 'yes') {
+                ttsCantonese(window.getSelection().toString());
+            }
+            break;
         case 87: // 'w', mandarin tts
-	    if(config.ttsEnabled == 'yes') {
-		ttsMandarin(window.getSelection().toString());
-	    }
-	    break;
+            if (config.ttsEnabled == 'yes') {
+                ttsMandarin(window.getSelection().toString());
+            }
+            break;
 
         case 66: // 'b'
-        {
-            let offset = selStartDelta;
-            for (let i = 0; i < 10; i++) {
-                selStartDelta = --offset;
-                let ret = triggerSearch();
-                if (ret === 0) {
-                    break;
-                } else if (ret === 2) {
-                    savedRangeNode = findPreviousTextNode(savedRangeNode.parentNode, savedRangeNode);
-                    savedRangeOffset = 0;
-                    offset = savedRangeNode.data.length;
+            {
+                let offset = selStartDelta;
+                for (let i = 0; i < 10; i++) {
+                    selStartDelta = --offset;
+                    let ret = triggerSearch();
+                    if (ret === 0) {
+                        break;
+                    } else if (ret === 2) {
+                        savedRangeNode = findPreviousTextNode(savedRangeNode.parentNode, savedRangeNode);
+                        savedRangeOffset = 0;
+                        offset = savedRangeNode.data.length;
+                    }
                 }
             }
-        }
             break;
 
         case 71: // 'g'
@@ -209,26 +239,26 @@ function onKeyDown(keyDown) {
             break;
 
         case 82: // 'r'
-        {
-            let entries = [];
-            for (let j = 0; j < savedSearchResults.length; j++) {
-                let entry = {
-                    simplified: savedSearchResults[j].simplified,
-                    traditional: savedSearchResults[j].traditional,
-                    pinyin: savedSearchResults[j].pronunciation.mandarin,
-                    jyutping: savedSearchResults[j].pronunciation.cantonese,
-                    definition: savedSearchResults[j].definition
-                };
-                entries.push(entry);
+            {
+                let entries = [];
+                for (let j = 0; j < savedSearchResults.length; j++) {
+                    let entry = {
+                        simplified: savedSearchResults[j].simplified,
+                        traditional: savedSearchResults[j].traditional,
+                        pinyin: savedSearchResults[j].pronunciation.mandarin,
+                        jyutping: savedSearchResults[j].pronunciation.cantonese,
+                        definition: savedSearchResults[j].definition
+                    };
+                    entries.push(entry);
+                }
+
+                chrome.runtime.sendMessage({
+                    'type': 'add',
+                    'entries': entries
+                });
+
+                showPopup('Added to word list.<p>Press Alt+W to open word list.', null, -1, -1);
             }
-
-            chrome.runtime.sendMessage({
-                'type': 'add',
-                'entries': entries
-            });
-
-            showPopup('Added to word list.<p>Press Alt+W to open word list.', null, -1, -1);
-        }
             break;
 
         case 83: // 's'
@@ -388,7 +418,7 @@ function onKeyDown(keyDown) {
                 });
             }
             break;
-	
+
 
         default:
             return;
@@ -515,10 +545,10 @@ function triggerSearch() {
     // not a Chinese character
     if (isNaN(u) ||
         (u !== 0x25CB &&
-        (u < 0x3400 || 0x9FFF < u) &&
-        (u < 0xF900 || 0xFAFF < u) &&
-        (u < 0xFF21 || 0xFF3A < u) &&
-        (u < 0xFF41 || 0xFF5A < u))) {
+            (u < 0x3400 || 0x9FFF < u) &&
+            (u < 0xF900 || 0xFAFF < u) &&
+            (u < 0xFF21 || 0xFF3A < u) &&
+            (u < 0xFF41 || 0xFF5A < u))) {
         clearHighlight();
         hidePopup();
         return 3;
@@ -534,18 +564,18 @@ function triggerSearch() {
     savedSelEndList = selEndList;
 
     chrome.runtime.sendMessage({
-            'type': 'search',
-            'text': text,
-            'originalText': originalText
-        },
+        'type': 'search',
+        'text': text,
+        'originalText': originalText
+    },
         processSearchResult
     );
 
     return 0;
 }
 
-function processSearchResult(result) {
-
+async function processSearchResult(result) {
+    let config = await getConfig()
     let selStartOffset = savedSelStartOffset;
     let selEndList = savedSelEndList;
 
@@ -563,8 +593,8 @@ function processSearchResult(result) {
     for (let i = 0; i < result.originalText.length; i++) {
         index = i + 1;
         const currentWord = result.originalText.substring(0, index)
-                            .replace(/\u200c/g, '');
-        if(currentWord.valueOf() === originalWord.valueOf()) {
+            .replace(/\u200c/g, '');
+        if (currentWord.valueOf() === originalWord.valueOf()) {
             break;
         }
     }
@@ -587,7 +617,7 @@ function processSearchResult(result) {
         highlightMatch(doc, rangeNode, selStartOffset, highlightLength, selEndList);
     }
 
-    showPopup(makeHtml(result, config.tonecolors !== 'no'), savedTarget, popX, popY, false);
+    await showPopup(await makeHtml(result, config.tonecolors !== 'no'), savedTarget, popX, popY, false);
 }
 
 // modifies selEndList as a side-effect
@@ -630,8 +660,8 @@ function getTextFromSingleNode(node, selEndList, maxLength) {
     }
 }
 
-function showPopup(html, elem, x, y, looseWidth) {
-
+async function showPopup(html, elem, x, y, looseWidth) {
+    const config = await getConfig()
     if (!x || !y) {
         x = y = 0;
     }
@@ -722,7 +752,7 @@ function showPopup(html, elem, x, y, looseWidth) {
                 if (t >= 0) {
                     y = t;
                 }
-            } else  {
+            } else {
                 y += v;
             }
 
@@ -794,19 +824,20 @@ function isVisible() {
     return popup && popup.style.display !== 'none';
 }
 
-function savedSearchResultToString(r) {
+async function savedSearchResultToString(r) {
+    const config = await getConfig()
     let tuple = config.zhuyin === 'yes'
         ? [r.traditional, r.simplified, r.pronunciation.cantonese,
-           r.pronunciation.mandarin, r.pronunciation.zhuyin, r.definition]
+        r.pronunciation.mandarin, r.pronunciation.zhuyin, r.definition]
         : [r.traditional, r.simplified, r.pronunciation.cantonese,
-           r.pronunciation.mandarin, r.definition];
+        r.pronunciation.mandarin, r.definition];
     return tuple.join('\t');
 }
 
-function getTextForClipboard() {
+async function getTextForClipboard() {
     let result = '';
     for (let i = 0; i < savedSearchResults.length; i++) {
-        result += savedSearchResultToString(savedSearchResults[i]);
+        result += await savedSearchResultToString(savedSearchResults[i]);
         result += '\n';
     }
     return result;
@@ -891,7 +922,7 @@ function copyToClipboard(data) {
 function ttsAny(data, language) {
     let utterance = new SpeechSynthesisUtterance();
     // Set the text to be spoken
-    utterance.text = data; 
+    utterance.text = data;
     // Set the language and voice for Mandarin
     utterance.lang = language;
     utterance.voice = synth.getVoices().find((voice) => voice.lang === language);
@@ -903,11 +934,11 @@ function ttsMandarin(data) {
 }
 
 function ttsCantonese(data) {
-   ttsAny(data, "zh-HK"); 
+    ttsAny(data, "zh-HK");
 }
 
-function makeHtml(result, showToneColors) {
-
+async function makeHtml(result, showToneColors) {
+    const config = await getConfig()
     let html = '';
     let texts = [];
     let hanziClass;
@@ -917,7 +948,7 @@ function makeHtml(result, showToneColors) {
     const grammarIndex = result.words.findIndex((entry) => entry.grammar === true);
 
     result.words.forEach((word, index) => {
-        word.entries.forEach((entry) => {
+        word.entries.forEach(async (entry) => {
             if (config.simpTrad === 'auto') {
                 hanziClass = 'w-hanzi';
                 if (config.fontSize === 'small') {
@@ -944,7 +975,7 @@ function makeHtml(result, showToneColors) {
             }
 
             const p = {
-                mandarin: pinyinAndZhuyin(entry.pronunciation.mandarin, showToneColors, pinyinClass),
+                mandarin: await pinyinAndZhuyin(entry.pronunciation.mandarin, showToneColors, pinyinClass),
                 cantonese: [`<span class="${pinyinClass}">${entry.pronunciation.cantonese}</span>`, entry.pronunciation.cantonese]
             };
 
@@ -960,7 +991,7 @@ function makeHtml(result, showToneColors) {
             }
 
             // Cantonese entries
-            if(entry.type === "cantonese") {
+            if (entry.type === "cantonese") {
                 html += `<span style="float: right" class="${pinyinClass}">Cant.</span>`;
             }
 
@@ -1057,7 +1088,8 @@ function tonify(vowels, tone) {
     return [html, text];
 }
 
-function pinyinAndZhuyin(syllables, showToneColors, pinyinClass) {
+async function pinyinAndZhuyin(syllables, showToneColors, pinyinClass) {
+    const config = await getConfig()
     let text = '';
     let html = '';
     let zhuyin = '';

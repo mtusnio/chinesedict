@@ -48,48 +48,17 @@
 
 import { ZhongwenDictionary } from './dict.js';
 
-// let isEnabled = localStorage['enabled'] === '1';
-
-let isActivated = false;
-
 let tabIDs = {};
 
 let dict;
 
-// let zhongwenOptions = window.zhongwenOptions = {
-//     css: localStorage['popupcolor'] || 'yellow',
-//     tonecolors: localStorage['tonecolors'] || 'yes',
-//     fontSize: localStorage['fontSize'] || 'small',
-//     skritterTLD: localStorage['skritterTLD'] || 'com',
-//     zhuyin: localStorage['zhuyin'] || 'no',
-//     grammar: localStorage['grammar'] || 'yes',
-//     simpTrad: localStorage['simpTrad'] || 'classic',
-//     toneColorScheme: localStorage['toneColorScheme'] || 'standard',
-//     cantoneseEntriesEnabled: localStorage['cantoneseEntriesEnabled'] || 'yes',
-//     jyutpingEnabled: localStorage['jyutpingEnabled'] || 'yes',
-//     pinyinEnabled: localStorage['pinyinEnabled'] || 'yes',
-//     ttsEnabled: localStorage['ttsEnabled'] || 'no'
-// };
 
 async function activateExtension(tabId, showHelp) {
-    // isActivated = true;
-
     await chrome.storage.local.set({ "enabled": true })
 
     if (!dict) {
         loadDictionary().then(r => dict = r);
     }
-
-    // chrome.tabs.sendMessage(tabId, {
-    //     'type': 'enable',
-    //     // 'config': zhongwenOptions
-    // });
-
-    // if (showHelp) {
-    //     chrome.tabs.sendMessage(tabId, {
-    //         'type': 'showHelp'
-    //     });
-    // }
 
     chrome.action.setBadgeBackgroundColor({
         'color': [255, 0, 0, 255]
@@ -100,77 +69,10 @@ async function activateExtension(tabId, showHelp) {
     });
 
 
-
-    // chrome.contextMenus.create(
-    //     {
-    //         id: "open-word-list",
-    //         title: 'Open word list',
-    //         // onclick: function () {
-    //         //     let url = chrome.runtime.getURL('/wordlist.html');
-    //         //     let tabID = tabIDs['wordlist'];
-    //         //     if (tabID) {
-    //         //         chrome.tabs.get(tabID, function (tab) {
-    //         //             if (tab && tab.url && (tab.url.substr(-13) === 'wordlist.html')) {
-    //         //                 chrome.tabs.reload(tabID);
-    //         //                 chrome.tabs.update(tabID, {
-    //         //                     active: true
-    //         //                 });
-    //         //             } else {
-    //         //                 chrome.tabs.create({
-    //         //                     url: url
-    //         //                 }, function (tab) {
-    //         //                     tabIDs['wordlist'] = tab.id;
-    //         //                     chrome.tabs.reload(tab.id);
-    //         //                 });
-    //         //             }
-    //         //         });
-    //         //     } else {
-    //         //         chrome.tabs.create(
-    //         //             { url: url },
-    //         //             function (tab) {
-    //         //                 tabIDs['wordlist'] = tab.id;
-    //         //                 chrome.tabs.reload(tab.id);
-    //         //             }
-    //         //         );
-    //         //     }
-    //         // }
-    //     }
-    // );
-    // chrome.contextMenus.create(
-    //     {
-    //         id: "help",
-    //         title: 'Show help in new tab',
-    //         // onclick: function () {
-    //         //     let url = chrome.runtime.getURL('/help.html');
-    //         //     let tabID = tabIDs['help'];
-    //         //     if (tabID) {
-    //         //         chrome.tabs.get(tabID, function (tab) {
-    //         //             if (tab && (tab.url.substr(-9) === 'help.html')) {
-    //         //                 chrome.tabs.reload(tabID);
-    //         //                 chrome.tabs.update(tabID, {
-    //         //                     active: true
-    //         //                 });
-    //         //             } else {
-    //         //                 chrome.tabs.create({
-    //         //                     url: url
-    //         //                 }, function (tab) {
-    //         //                     tabIDs['help'] = tab.id;
-    //         //                     chrome.tabs.reload(tab.id);
-    //         //                 });
-    //         //             }
-    //         //         });
-    //         //     } else {
-    //         //         chrome.tabs.create(
-    //         //             { url: url },
-    //         //             function (tab) {
-    //         //                 tabIDs['help'] = tab.id;
-    //         //                 chrome.tabs.reload(tab.id);
-    //         //             }
-    //         //         );
-    //         //     }
-    //         // }
-    //     }
-    // );
+    chrome.tabs.sendMessage(tabId, {
+        'type': 'enable',
+        // 'config': zhongwenOptions
+    });
 }
 
 async function loadDictData() {
@@ -209,23 +111,22 @@ async function deactivateExtension() {
 
     await chrome.storage.local.set({ "enabled": false })
 
-
-    // Send a disable message to all tabs in all windows.
-    // chrome.windows.getAll(
-    //     { 'populate': true },
-    //     function (windows) {
-    //         for (let i = 0; i < windows.length; ++i) {
-    //             let tabs = windows[i].tabs;
-    //             for (let j = 0; j < tabs.length; ++j) {
-    //                 chrome.tabs.sendMessage(tabs[j].id, {
-    //                     'type': 'disable'
-    //                 });
-    //             }
-    //         }
-    //     }
-    // );
-
     chrome.contextMenus.removeAll();
+
+    chrome.windows.getAll(
+        { 'populate': true },
+        function (windows) {
+            for (let i = 0; i < windows.length; ++i) {
+                let tabs = windows[i].tabs;
+                for (let j = 0; j < tabs.length; ++j) {
+                    chrome.tabs.sendMessage(tabs[j].id, {
+                        'type': 'disable'
+                    });
+                }
+            }
+        }
+    );
+
 }
 
 async function activateExtensionToggle(currentTab) {
@@ -241,14 +142,11 @@ async function enableTab(tabId) {
     const data = await chrome.storage.local.get(["enabled"])
     if (data.enabled) {
 
-        if (!isActivated) {
-            activateExtension(tabId, false);
-        }
 
-        // chrome.tabs.sendMessage(tabId, {
-        //     'type': 'enable',
-        //     // 'config': zhongwenOptions
-        // });
+        chrome.tabs.sendMessage(tabId, {
+            'type': 'enable',
+            // 'config': zhongwenOptions
+        });
     }
 }
 

@@ -1,8 +1,5 @@
 {
     "setupFiles": [
         "<rootDir>/mock-extension-apis.js"
-    ],
-    "config": {
-        "transform": {}
-    }
+    ]
 }

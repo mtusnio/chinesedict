@@ -4,20 +4,20 @@ import { ZhongwenDictionary } from './dict.js';
 
 let dict;
 
-async function activateExtension(tabId, showHelp) {
+async function activateExtension() {
     await chrome.storage.local.set({ "enabled": true })
 
-    // if (!dict) {
-    //     loadDictionary().then(r => dict = r);
-    // }
+    if (!dict) {
+        dict = await loadDictionary()
+    }
 
-    // chrome.action.setBadgeBackgroundColor({
-    //     'color': [255, 0, 0, 255]
-    // });
+    await chrome.action.setBadgeBackgroundColor({
+        'color': [255, 0, 0, 255]
+    });
 
-    // chrome.action.setBadgeText({
-    //     'text': 'On'
-    // });
+    await chrome.action.setBadgeText({
+        'text': 'On'
+    });
 }
 
 async function loadDictData() {
@@ -44,27 +44,25 @@ async function loadDictionary() {
 }
 
 async function deactivateExtension() {
-    dict = undefined;
+    dict = null;
 
-    chrome.action.setBadgeBackgroundColor({
+    await chrome.action.setBadgeBackgroundColor({
         'color': [0, 0, 0, 0]
     });
 
-    chrome.action.setBadgeText({
+    await chrome.action.setBadgeText({
         'text': ''
     });
 
     await chrome.storage.local.set({ "enabled": false })
-
-    chrome.contextMenus.removeAll();
 }
 
-async function activateExtensionToggle(currentTab) {
+async function activateExtensionToggle() {
     const data = await chrome.storage.local.get(["enabled"])
     if (data.enabled) {
         await deactivateExtension();
     } else {
-        await activateExtension(currentTab.id, true);
+        await activateExtension();
     }
 }
 
@@ -72,14 +70,11 @@ async function enableTab(tabId) {
     const data = await chrome.storage.local.get(["enabled"])
     if (data.enabled) {
 
-        if (!isActivated) {
-            activateExtension(tabId, false);
-        }
 
-        // chrome.tabs.sendMessage(tabId, {
-        //     'type': 'enable',
-        //     // 'config': zhongwenOptions
-        // });
+        chrome.tabs.sendMessage(tabId, {
+            'type': 'enable',
+            // 'config': zhongwenOptions
+        });
     }
 }
 
@@ -115,4 +110,4 @@ function search(text) {
     return words;
 }
 
-export { activateExtension }
+export { activateExtension, deactivateExtension, activateExtensionToggle, dict }

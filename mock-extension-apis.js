@@ -3,12 +3,25 @@ import * as fs from "node:fs/promises"
 let _storage = {}
 
 global.chrome = {
+    tabs: {
+        onClicked: {
+            addListener: () => { throw Error("Not Implemented") },
+            onUpdated: () => { throw Error("Not Implemented") }
+        },
+    },
+
     runtime: {
         getURL(path) {
             return path
         },
+        onMessage: {
+            addListener: () => { throw Error("Not Implemented") }
+        }
     },
     action: {
+        onClicked: {
+            addListener: () => { throw Error("Not Implemented") }
+        },
         setBadgeBackgroundColor: () => {
             throw Error("Not Implemented")
         },

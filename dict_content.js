@@ -456,7 +456,7 @@ async function makeHtml(result, showToneColors) {
             }
 
             const p = {
-                mandarin: await pinyinAndZhuyin(entry.pronunciation.mandarin, showToneColors, pinyinClass),
+                mandarin: pinyinAndZhuyin(entry.pronunciation.mandarin, showToneColors, pinyinClass, config),
                 cantonese: [`<span class="${pinyinClass}">${entry.pronunciation.cantonese}</span>`, entry.pronunciation.cantonese]
             };
 
@@ -569,8 +569,7 @@ function tonify(vowels, tone) {
     return [html, text];
 }
 
-async function pinyinAndZhuyin(syllables, showToneColors, pinyinClass) {
-    const config = await getConfig();
+function pinyinAndZhuyin(syllables, showToneColors, pinyinClass, config) {
     let text = '';
     let html = '';
     let zhuyin = '';

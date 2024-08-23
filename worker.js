@@ -46,8 +46,8 @@
 
 'use strict';
 
-import * as actions from "./lib/actions.js"
-import * as setup from "./lib/setup.js"
+import * as actions from "./lib/actions.js";
+import * as setup from "./lib/setup.js";
 
 let tabIDs = {};
 
@@ -60,27 +60,28 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
     }
 });
 
-chrome.runtime.onMessage.addListener(async function (request, sender, callback) {
-    const config = await actions.getConfig()
+chrome.runtime.onMessage.addListener(function (request, sender, responseCallback) {
 
     let tabID;
 
     switch (request.type) {
 
         case 'search': {
-            const displayedPronunciations = (config["pinyinEnabled"] === "yes" ? ["pinyin"] : [])
-                .concat(config["jyutpingEnabled"] === "yes" ? ["jyutping"] : []);
-            const response = {
-                words: await actions.search(request.text),
-                originalText: request.originalText,
-                displayedPronunciations
-            };
+            actions.getConfig().then(async (config) => {
+                const displayedPronunciations = (config["pinyinEnabled"] === "yes" ? ["pinyin"] : [])
+                    .concat(config["jyutpingEnabled"] === "yes" ? ["jyutping"] : []);
+                const words = await actions.search(request.text)
 
-            console.log("Sending a search response:", response)
+                const response = {
+                    words: words,
+                    originalText: request.originalText,
+                    displayedPronunciations
+                };
+                responseCallback(response);
+            });
 
-            callback(response);
+            return true
         }
-            break;
 
         case 'open':
             tabID = tabIDs[request.tabType];

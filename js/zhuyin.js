@@ -1,4 +1,3 @@
-/* global globalThis */
 
 const zhuyinTones = ['?', '', '\u02CA', '\u02C7', '\u02CB', '\u30FB'];
 
@@ -437,7 +436,7 @@ globalThis.accentedPinyin2Zhuyin = function (syllable) {
         let idx = lowerCased.indexOf(pinyinTones[i]);
         if (idx > 0) {
             key = lowerCased.substring(0, idx);
-            if (idx < lowerCased.length -1) {
+            if (idx < lowerCased.length - 1) {
                 key += lowerCased.substring(idx + 1);
             }
             tone = i;

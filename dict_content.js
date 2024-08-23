@@ -44,7 +44,6 @@
 
  */
 
-/* global globalThis */
 
 'use strict';
 
@@ -84,7 +83,7 @@ let zwnj = /\u200c/g;
 // Initialize the speech synthesis object
 let synth = window.speechSynthesis;
 
-console.log("Extension loaded")
+console.log("Extension loaded");
 
 async function getConfig() {
     const localStorage = await chrome.storage.local.get([
@@ -100,7 +99,7 @@ async function getConfig() {
         "jyutpingEnabled",
         "pinyinEnabled",
         "ttsEnabled"
-    ])
+    ]);
 
     return {
         css: localStorage['popupcolor'] || 'yellow',
@@ -141,9 +140,9 @@ function disableTab() {
 
 
 async function showPopup(html, elem, x, y, looseWidth) {
-    console.log("show popup called")
+    console.log("show popup called");
 
-    const config = await getConfig()
+    const config = await getConfig();
     if (!x || !y) {
         x = y = 0;
     }
@@ -307,7 +306,7 @@ function isVisible() {
 }
 
 async function savedSearchResultToString(r) {
-    const config = await getConfig()
+    const config = await getConfig();
     let tuple = config.zhuyin === 'yes'
         ? [r.traditional, r.simplified, r.pronunciation.cantonese,
         r.pronunciation.mandarin, r.pronunciation.zhuyin, r.definition]
@@ -420,7 +419,7 @@ function ttsCantonese(data) {
 }
 
 async function makeHtml(result, showToneColors) {
-    const config = await getConfig()
+    const config = await getConfig();
     let html = '';
     let texts = [];
     let hanziClass;
@@ -571,7 +570,7 @@ function tonify(vowels, tone) {
 }
 
 async function pinyinAndZhuyin(syllables, showToneColors, pinyinClass) {
-    const config = await getConfig()
+    const config = await getConfig();
     let text = '';
     let html = '';
     let zhuyin = '';
@@ -729,12 +728,12 @@ function triggerSearch() {
 
 
 async function processSearchResult(result) {
-    let config = await getConfig()
+    let config = await getConfig();
     let selStartOffset = savedSelStartOffset;
     let selEndList = savedSelEndList;
 
-    console.log("processSearchResult")
-    console.log("results:", result)
+    console.log("processSearchResult");
+    console.log("results:", result);
 
     if (!result || result.words.length === 0) {
         hidePopup();
@@ -819,7 +818,7 @@ function getTextFromSingleNode(node, selEndList, maxLength) {
 
 
 function onMouseMove(mouseMove) {
-    console.log("Mouse Move")
+    console.log("Mouse Move");
     if (mouseMove.target.nodeName === 'TEXTAREA' || mouseMove.target.nodeName === 'INPUT'
         || mouseMove.target.nodeName === 'DIV') {
 
@@ -1200,18 +1199,18 @@ async function onKeyDown(keyDown) {
     }
 }
 
-console.log("Extension onMessage")
+console.log("Extension onMessage");
 // event listener
 chrome.runtime.onMessage.addListener(
     function (request) {
         switch (request.type) {
             case 'enable':
-                console.log("Received enable message")
+                console.log("Received enable message");
                 document.addEventListener('mousemove', onMouseMove);
                 // document.addEventListener('keydown', onKeyDown);
                 break;
             case 'disable':
-                disableTab()
+                disableTab();
                 break;
             case 'showPopup':
                 if (!request.isHelp || window === window.top) {

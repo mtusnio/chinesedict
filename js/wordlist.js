@@ -4,7 +4,6 @@
  https://chrome.google.com/extensions/detail/kkmlkkjojmombglmlpbpapmhcaljjkde
  */
 
-/* global globalThis */
 
 let wordList = localStorage['wordlist'];
 
@@ -12,7 +11,7 @@ let showZhuyin = localStorage['zhuyin'] === 'yes';
 let showJyutping = localStorage['jyutpingEnabled'] || 'yes';
 let showPinyin = localStorage['pinyinEnabled'] || 'yes';
 
-const NOTES_COLUMN =  7;
+const NOTES_COLUMN = 7;
 
 let entries;
 if (wordList) {

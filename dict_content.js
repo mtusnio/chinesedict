@@ -141,6 +141,8 @@ function disableTab() {
 
 
 async function showPopup(html, elem, x, y, looseWidth) {
+    console.log("show popup called")
+
     const config = await getConfig()
     if (!x || !y) {
         x = y = 0;
@@ -730,6 +732,9 @@ async function processSearchResult(result) {
     let config = await getConfig()
     let selStartOffset = savedSelStartOffset;
     let selEndList = savedSelEndList;
+
+    console.log("processSearchResult")
+    console.log("results:", result)
 
     if (!result || result.words.length === 0) {
         hidePopup();

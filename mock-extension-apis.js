@@ -8,6 +8,7 @@ global.chrome = {
             addListener: () => { throw Error("Not Implemented") },
             onUpdated: () => { throw Error("Not Implemented") }
         },
+        sendMessage: () => { throw Error("Not Implemented") }
     },
 
     runtime: {

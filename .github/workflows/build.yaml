@@ -1,0 +1,19 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'manifest-v3'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm test

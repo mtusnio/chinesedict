@@ -4,11 +4,13 @@ const EXTENSION_PATH = './';
 
 async function setupBrowser() {
     const browser = await puppeteer.launch({
+        browser: "chrome",
         headless: false,
         devTools: true,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
-            `--load-extension=${EXTENSION_PATH}`
+            `--load-extension=${EXTENSION_PATH}`,
+            `--window-size=1280,720`
         ]
     });
 

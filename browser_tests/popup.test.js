@@ -23,12 +23,12 @@ test("popup appears when hovering over text in plain html", async () => {
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-    await utils.wait(200)
+    await utils.wait(500)
 
     await page.setViewport({ width: 1280, height: 720 });
     await utils.wait(500)
 
     await page.mouse.move(50, 10)
-    const exists = !! await page.waitForSelector("#zhongwen-window");
+    const exists = !! await page.waitForSelector("#zhongwen-window", { timeout: 5000 });
     expect(exists).toBe(true)
 })

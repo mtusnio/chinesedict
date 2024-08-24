@@ -42,6 +42,9 @@ global.chrome = {
                 return ret;
             }
         }
+    },
+    windows: {
+        getAll: () => { throw Error("Not implemented") }
     }
 };
 

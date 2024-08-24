@@ -3,9 +3,14 @@ import * as puppeteer from "puppeteer";
 const EXTENSION_PATH = './';
 
 async function setupBrowser() {
+    let headless = true
+    if (process.env["HEADLESS"]) {
+        headless = process.env["HEADLESS"] == "true"
+    }
+
     const browser = await puppeteer.launch({
         browser: "chrome",
-        headless: false,
+        headless: headless,
         devTools: true,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,

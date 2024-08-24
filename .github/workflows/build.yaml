@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '20.x'
       - run: npm ci
-      - run: npm test
+      - run: npm run test-unit
   browser-tests:
     runs-on: ubuntu-latest
     steps:

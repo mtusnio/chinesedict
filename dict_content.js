@@ -817,7 +817,7 @@ function getTextFromSingleNode(node, selEndList, maxLength) {
 
 
 function onMouseMove(mouseMove) {
-    console.log("Mouse Move");
+    console.log("Mouse Move", mouseMove);
     if (mouseMove.target.nodeName === 'TEXTAREA' || mouseMove.target.nodeName === 'INPUT'
         || mouseMove.target.nodeName === 'DIV') {
 

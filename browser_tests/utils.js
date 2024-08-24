@@ -5,6 +5,7 @@ const EXTENSION_PATH = './';
 async function setupBrowser() {
     const browser = await puppeteer.launch({
         headless: false,
+        devTools: true,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
             `--load-extension=${EXTENSION_PATH}`

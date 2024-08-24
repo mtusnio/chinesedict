@@ -47,7 +47,9 @@
 'use strict';
 
 import * as actions from "./lib/actions.js";
+import * as configuration from "./lib/configuration.js";
 import * as setup from "./lib/setup.js";
+import * as wordlist from "./lib/wordlist.js";
 
 let tabIDs = {};
 
@@ -67,7 +69,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, responseCallback
     switch (request.type) {
 
         case 'search': {
-            actions.getConfig().then(async (config) => {
+            configuration.get().then(async (config) => {
                 const displayedPronunciations = (config["pinyinEnabled"] === "yes" ? ["pinyin"] : [])
                     .concat(config["jyutpingEnabled"] === "yes" ? ["jyutping"] : []);
                 const words = await actions.search(request.text)
@@ -129,42 +131,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, responseCallback
             break;
 
         case 'add': {
-            let json = localStorage['wordlist'];
+            Promise.all(wordlist.get(), configuration.get()).then(([wordlist, config]) => {
+                let saveFirstEntryOnly = config['saveToWordList'] === 'firstEntryOnly';
 
-            let saveFirstEntryOnly = localStorage['saveToWordList'] === 'firstEntryOnly';
 
-            let wordlist;
-            if (json) {
-                wordlist = JSON.parse(json);
-            } else {
-                wordlist = [];
-            }
+                for (let i in request.entries) {
+                    let entry = {};
+                    entry.timestamp = Date.now();
+                    entry.simplified = request.entries[i].simplified;
+                    entry.traditional = request.entries[i].traditional;
+                    entry.pinyin = request.entries[i].pinyin;
+                    entry.definition = request.entries[i].definition;
+                    entry.jyutping = request.entries[i].jyutping;
 
-            for (let i in request.entries) {
-                let entry = {};
-                entry.timestamp = Date.now();
-                entry.simplified = request.entries[i].simplified;
-                entry.traditional = request.entries[i].traditional;
-                entry.pinyin = request.entries[i].pinyin;
-                entry.definition = request.entries[i].definition;
-                entry.jyutping = request.entries[i].jyutping;
+                    wordlist.push(entry);
 
-                wordlist.push(entry);
-
-                if (saveFirstEntryOnly) {
-                    break;
-                }
-            }
-            localStorage['wordlist'] = JSON.stringify(wordlist);
-
-            tabID = tabIDs['wordlist'];
-            if (tabID) {
-                chrome.tabs.get(tabID, function (tab) {
-                    if (tab) {
-                        chrome.tabs.reload(tabID);
+                    if (saveFirstEntryOnly) {
+                        break;
                     }
-                });
-            }
+                }
+                localStorage['wordlist'] = JSON.stringify(wordlist);
+
+                tabID = tabIDs['wordlist'];
+                if (tabID) {
+                    chrome.tabs.get(tabID, function (tab) {
+                        if (tab) {
+                            chrome.tabs.reload(tabID);
+                        }
+                    });
+                }
+            })
         }
             break;
 

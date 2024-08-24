@@ -53,6 +53,20 @@ test("if extension DISABLED, popup does not appear when hovering over text in pl
     await expect(page.waitForSelector(zhongwenWindowSelector, { timeout: 3000 })).rejects.toThrow(TimeoutError)
 })
 
+test("if extension DISABLED, popup does not appear when hovering over text in an HTML-rich site", async () => {
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 4000 })
+    await page.locator(targetSelector).hover();
+    await expect(page.waitForSelector(zhongwenWindowSelector, { timeout: 3000 })).rejects.toThrow(TimeoutError)
+})
+
 test("prints out a valid HTML when hovering over 有 in an HTML-rich site", async () => {
     const page = await browser.newPage();
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });

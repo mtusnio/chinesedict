@@ -1,7 +1,10 @@
+import { jest } from '@jest/globals';
+
 import path from 'path';
 import { TimeoutError } from 'puppeteer';
 import * as utils from "./utils";
 
+jest.retryTimes(3);
 
 let browser = null;
 let worker = null

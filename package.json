@@ -23,12 +23,14 @@
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.9.0",
     "jest": "^29.7.0",
-    "prettier": "3.3.3"
+    "prettier": "3.3.3",
+    "puppeteer": "^23.1.1"
   },
   "scripts": {
     "lint": "npx eslint --fix *.js js/options.js js/wordlist.js js/zhuyin.js",
     "csslint": "stylelint css/content.css css/wordlist.css",
     "zip": "zip -r dictionary.zip ./* -x '*.git*' -x add_jyutping.py -x package.json -x package-lock.json",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathIgnorePatterns='browser_tests/*'",
+    "test-browser": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern='browser_tests/*'"
   }
 }

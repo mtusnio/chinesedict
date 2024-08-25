@@ -18,9 +18,11 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-    await browser.close();
-    browser = null;
-    worker = null
+    if (process.env["DO_NOT_CLOSE"] != "true") {
+        await browser.close();
+        browser = null;
+        worker = null
+    }
 });
 
 test("if extension ENABLED, popup appears when hovering over text in plain html", async () => {

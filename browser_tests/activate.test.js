@@ -1,3 +1,4 @@
+import path from 'path';
 import * as utils from "./utils";
 
 let browser = null;
@@ -10,14 +11,17 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-    await browser.close();
-    browser = null;
-    worker = null
+    if (process.env["DO_NOT_CLOSE"] != "true") {
+        await browser.close();
+        browser = null;
+        worker = null
+    }
 });
 
 test("extension is disabled by default", async () => {
     const page = await browser.newPage();
-    await page.goto("https://www.google.com/", { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/plain.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+
     await page.bringToFront();
 
     const status = await utils.getExtensionStatus(worker)
@@ -29,7 +33,8 @@ test("extension is disabled by default", async () => {
 
 test("toggling the extension on/off two times works", async () => {
     const page = await browser.newPage();
-    await page.goto("https://www.google.com/", { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/plain.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+
     await page.bringToFront();
 
     for (let i = 0; i < 2; i++) {

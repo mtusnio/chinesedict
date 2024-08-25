@@ -5,14 +5,20 @@ const EXTENSION_ID = "aoofnmlljjgifabglpelnbmipdfnfflk"
 
 async function setupBrowser() {
     let headless = true
+    let dumpio = false
     if (process.env["HEADLESS"]) {
         headless = process.env["HEADLESS"] == "true"
     }
+    if (process.env["DUMPIO"]) {
+        dumpio = process.env["DUMPIO"] == "true"
+    }
+
 
     const browser = await puppeteer.launch({
         browser: "chrome",
         headless: headless,
         devTools: true,
+        dumpio: dumpio,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
             `--load-extension=${EXTENSION_PATH}`,

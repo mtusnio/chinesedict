@@ -20,7 +20,8 @@
                 "${jest.testFile}"
             ],
             "env": {
-                "HEADLESS": "false"
+                "HEADLESS": "false",
+                "DO_NOT_CLOSE": "true"
             },
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

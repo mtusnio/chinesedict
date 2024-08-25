@@ -5,49 +5,66 @@
  */
 
 'use strict';
+async function getConfig() {
+    return await chrome.storage.local.get([
+        "popupcolor",
+        "tonecolors",
+        "fontSize",
+        "skritterTLD",
+        "zhuyin",
+        "grammar",
+        "simpTrad",
+        "toneColorScheme",
+        "cantoneseEntriesEnabled",
+        "jyutpingEnabled",
+        "pinyinEnabled",
+        "ttsEnabled",
+        "saveToWordList"
+    ]);
+}
 
-function loadVals() {
-
-    const popupColor = localStorage['popupcolor'] || 'yellow';
+async function loadVals() {
+    const config = await getConfig()
+    const popupColor = config['popupcolor'] || 'yellow';
     document.querySelector(`input[name="popupColor"][value="${popupColor}"]`).checked = true;
 
-    const toneColors = localStorage['tonecolors'] || 'yes';
+    const toneColors = config['tonecolors'] || 'yes';
     if (toneColors === 'no') {
         document.querySelector('#toneColorsNone').checked = true;
     } else {
-        const toneColorScheme = localStorage['toneColorScheme'] || 'standard';
+        const toneColorScheme = config['toneColorScheme'] || 'standard';
         document.querySelector(`input[name="toneColors"][value="${toneColorScheme}"]`).checked = true;
     }
 
-    const fontSize = localStorage['fontSize'] || 'small';
+    const fontSize = config['fontSize'] || 'small';
     document.querySelector(`input[name="fontSize"][value="${fontSize}"]`).checked = true;
 
-    const simpTrad = localStorage['simpTrad'] || 'classic';
+    const simpTrad = config['simpTrad'] || 'classic';
     document.querySelector(`input[name="simpTrad"][value="${simpTrad}"]`).checked = true;
 
-    const zhuyin = localStorage['zhuyin'] || 'no';
+    const zhuyin = config['zhuyin'] || 'no';
     document.querySelector('#zhuyin').checked = zhuyin === 'yes';
 
-    const grammar = localStorage['grammar'] || 'yes';
+    const grammar = config['grammar'] || 'yes';
     document.querySelector('#grammar').checked = grammar !== 'no';
 
-    const saveToWordList = localStorage['saveToWordList'] || 'allEntries';
+    const saveToWordList = config['saveToWordList'] || 'allEntries';
     document.querySelector(`input[name="saveToWordList"][value="${saveToWordList}"]`).checked = true;
 
-    const skritterTLD = localStorage['skritterTLD'] || 'com';
+    const skritterTLD = config['skritterTLD'] || 'com';
     document.querySelector(`input[name="skritterTLD"][value="${skritterTLD}"]`).checked = true;
 
-    const cantoneseEntriesEnabled = localStorage['cantoneseEntriesEnabled'] || 'yes';
+    const cantoneseEntriesEnabled = config['cantoneseEntriesEnabled'] || 'yes';
     document.querySelector('#cantoneseEntriesEnabled').checked = cantoneseEntriesEnabled === 'yes';
 
-    const jyutpingEnabled = localStorage['jyutpingEnabled'] || 'yes';
+    const jyutpingEnabled = config['jyutpingEnabled'] || 'yes';
     document.querySelector('#jyutpingEnabled').checked = jyutpingEnabled === 'yes';
 
-    const pinyinEnabled = localStorage['pinyinEnabled'] || 'yes';
+    const pinyinEnabled = config['pinyinEnabled'] || 'yes';
     document.querySelector('#pinyinEnabled').checked = pinyinEnabled === 'yes';
 
-    const ttsEnabled = localStorage['pinyinEnabled'] || 'no';
-    document.querySelector('#pinyinEnabled').checked = pinyinEnabled === 'yes';
+    const ttsEnabled = config['ttsEnabled'] || 'no';
+    document.querySelector('#ttsEnabled').checked = ttsEnabled === 'yes';
 }
 
 function setPopupColor(popupColor) {

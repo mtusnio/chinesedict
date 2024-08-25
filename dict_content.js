@@ -1206,7 +1206,7 @@ chrome.runtime.onMessage.addListener(
             case 'enable':
                 console.log("Received enable message");
                 document.addEventListener('mousemove', onMouseMove);
-                // document.addEventListener('keydown', onKeyDown);
+                document.addEventListener('keydown', onKeyDown);
                 break;
             case 'disable':
                 disableTab();

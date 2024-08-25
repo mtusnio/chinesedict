@@ -1,6 +1,7 @@
 import * as puppeteer from "puppeteer";
 
 const EXTENSION_PATH = './';
+const EXTENSION_ID = "aoofnmlljjgifabglpelnbmipdfnfflk"
 
 async function setupBrowser() {
     let headless = true
@@ -56,7 +57,5 @@ async function wait(miliseconds) {
     await new Promise((r) => setTimeout(r, miliseconds));
 }
 
-export {
-    getExtensionStatus, setupBrowser, toggleExtension, wait
-};
+export { EXTENSION_ID, getExtensionStatus, setupBrowser, toggleExtension, wait };
 

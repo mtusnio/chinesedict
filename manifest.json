@@ -19,6 +19,7 @@
     "service_worker": "worker.js",
     "type": "module"
   },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu35raGvSBXpdky2IOWrwUNk/lwb/jVlmJExN380NhUAZM6+sn1PEwxDKv/iKZawWTv5sxunw3OHb87aZPCSzt0uAXg4AtBDRVPdVwVDohwXVBXgHbsLT25a+JFP1kcgStAUvU0mI2Gh+vq2Rmc8MNHzNkVg5nZ4TFE5g9ZgRpqHR8Uc0AN5llpSFMPvzZ0CnheIwCGneh0UFMoJg2Rfe0G5uUyMQ0crWcLOIt1N5aDbbGqKHZmOq0qU0vfIVCSrmkY5JFQ6sJW7LMaC+TIgVZ9TWEqhots5XXQwLCUoSOZe5HEN+QBGe5GXGKRcBZt7hbHgmkqgv0E3PFxPepQa2yQIDAQAB",
   "content_scripts": [
     {
       "matches": [

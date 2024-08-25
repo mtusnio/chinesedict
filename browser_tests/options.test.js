@@ -19,6 +19,6 @@ afterEach(async () => {
 describe("the options page", function () {
     it("loads properly", async () => {
         const page = await browser.newPage();
-        await page.goto("chrome-extension://acjkjmnpaljkemhfmmoddfpblmigpmji/options.html");
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
     })
 })

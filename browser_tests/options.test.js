@@ -29,6 +29,13 @@ async function testChecked(page, selector, expectedChecked) {
     expect(isChecked).toBe(expectedChecked)
 }
 
+async function clickAndTest(page, selector, expectedChecked) {
+    await page.waitForSelector(selector)
+    await page.locator(selector).click()
+
+    await testChecked(page, selector, expectedChecked)
+}
+
 describe("the options page", function () {
     it("loads properly default page", async () => {
         const page = await browser.newPage();
@@ -56,13 +63,13 @@ describe("the options page", function () {
         await worker.evaluate(async () => {
             await chrome.storage.local.set(
                 {
-                    "popupcolor": "blue",
+                    "popupColor": "blue",
                     "fontSize": "large",
                     "simpTrad": "auto",
                     "zhuyin": "yes",
                     "grammar": "no",
                     "pinyinEnabled": "no",
-                    "tonecolors": "yes",
+                    "toneColors": "yes",
                     "toneColorScheme": "pleco",
                     "jyutpingEnabled": "no",
                     "cantoneseEntriesEnabled": "no",
@@ -89,5 +96,61 @@ describe("the options page", function () {
         await testChecked(page, "input[name='saveToWordList'][value='firstEntryOnly']", true)
         await testChecked(page, "input[name='skritterTLD'][value='cn']", true)
         await testChecked(page, "input[name='ttsEnabled']", true)
+    })
+
+    it("clicking each option changes the storage", async () => {
+        const page = await browser.newPage();
+
+        await page.bringToFront();
+
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
+
+        await clickAndTest(page, "input[name='popupColor'][value='blue']", true)
+        await clickAndTest(page, "input[name='fontSize'][value='large']", true)
+        await clickAndTest(page, "input[name='simpTrad'][value='auto']", true)
+        await clickAndTest(page, "input[name='zhuyin']", true)
+        await clickAndTest(page, "input[name='grammar']", false)
+        await clickAndTest(page, "input[name='pinyinEnabled']", false)
+        await clickAndTest(page, "input[name='toneColors'][value='pleco']", true)
+        await clickAndTest(page, "input[name='jyutpingEnabled']", false)
+        await clickAndTest(page, "input[name='cantoneseEntriesEnabled']", false)
+        await clickAndTest(page, "input[name='saveToWordList'][value='firstEntryOnly']", true)
+        await clickAndTest(page, "input[name='skritterTLD'][value='cn']", true)
+        await clickAndTest(page, "input[name='ttsEnabled']", true)
+
+        const storage = await worker.evaluate(async () => {
+            return await chrome.storage.local.get(
+                [
+                    "popupColor",
+                    "fontSize",
+                    "simpTrad",
+                    "zhuyin",
+                    "grammar",
+                    "pinyinEnabled",
+                    "toneColors",
+                    "toneColorScheme",
+                    "jyutpingEnabled",
+                    "cantoneseEntriesEnabled",
+                    "skritterTLD",
+                    "saveToWordList",
+                    "ttsEnabled",
+                ])
+        })
+
+        expect(storage).toEqual({
+            "popupColor": "blue",
+            "fontSize": "large",
+            "simpTrad": "auto",
+            "zhuyin": "yes",
+            "grammar": "no",
+            "pinyinEnabled": "no",
+            "toneColors": "yes",
+            "toneColorScheme": "pleco",
+            "jyutpingEnabled": "no",
+            "cantoneseEntriesEnabled": "no",
+            "skritterTLD": "cn",
+            "saveToWordList": "firstEntryOnly",
+            "ttsEnabled": "yes",
+        })
     })
 })

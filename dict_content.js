@@ -87,8 +87,8 @@ console.log("Extension loaded");
 
 async function getConfig() {
     const localStorage = await chrome.storage.local.get([
-        "popupcolor",
-        "tonecolors",
+        "popupColor",
+        "toneColors",
         "fontSize",
         "skritterTLD",
         "zhuyin",
@@ -102,8 +102,8 @@ async function getConfig() {
     ]);
 
     return {
-        css: localStorage['popupcolor'] || 'yellow',
-        tonecolors: localStorage['tonecolors'] || 'yes',
+        css: localStorage['popupColor'] || 'yellow',
+        toneColors: localStorage['toneColors'] || 'yes',
         fontSize: localStorage['fontSize'] || 'small',
         skritterTLD: localStorage['skritterTLD'] || 'com',
         zhuyin: localStorage['zhuyin'] || 'no',
@@ -772,7 +772,7 @@ async function processSearchResult(result) {
         highlightMatch(doc, rangeNode, selStartOffset, highlightLength, selEndList);
     }
 
-    await showPopup(await makeHtml(result, config.tonecolors !== 'no'), savedTarget, popX, popY, false);
+    await showPopup(await makeHtml(result, config.toneColors !== 'no'), savedTarget, popX, popY, false);
 }
 
 // modifies selEndList as a side-effect

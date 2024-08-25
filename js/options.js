@@ -7,8 +7,8 @@
 'use strict';
 async function getConfig() {
     return await chrome.storage.local.get([
-        "popupcolor",
-        "tonecolors",
+        "popupColor",
+        "toneColors",
         "fontSize",
         "skritterTLD",
         "zhuyin",
@@ -25,10 +25,10 @@ async function getConfig() {
 
 async function loadVals() {
     const config = await getConfig()
-    const popupColor = config['popupcolor'] || 'yellow';
+    const popupColor = config['popupColor'] || 'yellow';
     document.querySelector(`input[name="popupColor"][value="${popupColor}"]`).checked = true;
 
-    const toneColors = config['tonecolors'] || 'yes';
+    const toneColors = config['toneColors'] || 'yes';
     if (toneColors === 'no') {
         document.querySelector('#toneColorsNone').checked = true;
     } else {
@@ -67,23 +67,20 @@ async function loadVals() {
     document.querySelector('#ttsEnabled').checked = ttsEnabled === 'yes';
 }
 
-function setPopupColor(popupColor) {
-    localStorage['popupcolor'] = popupColor;
-    chrome.extension.getBackgroundPage().zhongwenOptions.css = popupColor;
-}
 
 function setToneColorScheme(toneColorScheme) {
     if (toneColorScheme === 'none') {
-        setOption('tonecolors', 'no');
+        setOption('toneColors', 'no');
     } else {
-        setOption('tonecolors', 'yes');
+        setOption('toneColors', 'yes');
         setOption('toneColorScheme', toneColorScheme);
     }
 }
 
 function setOption(option, value) {
-    localStorage[option] = value;
-    chrome.extension.getBackgroundPage().zhongwenOptions[option] = value;
+    chrome.storage.local.set({
+        [option]: value
+    })
 }
 
 function setBooleanOption(option, value) {
@@ -95,7 +92,7 @@ window.addEventListener('load', () => {
 
     document.querySelectorAll('input[name="popupColor"]').forEach((input) => {
         input.addEventListener('change',
-            () => setPopupColor(input.getAttribute('value')));
+            () => setOption("popupColor", input.getAttribute('value')))
     });
 
     document.querySelectorAll('input[name="toneColors"]').forEach((input) => {

@@ -949,29 +949,34 @@ async function onKeyDown(keyDown) {
         return;
     }
 
+
+    console.log("KeyDownCode", keyDown.keyCode)
+
+    const keyCodes = { "0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57, "d": 68, "b": 66, "a": 65, "s": 83, "i": 73, "f": 70, "k": 75, "ß": 219, "Dead": 220, "+": 187, "ü": 186, "p": 80, "o": 79, "u": 85, "z": 90, "t": 84, "r": 82, "e": 69, "w": 87, "g": 71, "h": 72, "j": 74, "l": 76, "ö": 192, "ä": 222, "#": 191, "y": 89, "x": 88, "c": 67, "v": 86, "n": 78, "m": 77, ",": 188, ".": 190, "-": 189, "ArrowRight": 39, "ArrowLeft": 37, "ArrowUp": 38, "ArrowDown": 40, "PageDown": 34, "Clear": 12, "Home": 36, "PageUp": 33, "End": 35, "Delete": 46, "Insert": 45, "Control": 17, "AltGraph": 18, "Meta": 92, "Alt": 18, "Shift": 16, "CapsLock": 20, "Tab": 9, "Escape": 27, "F1": 112, "F2": 113, ";": 188, ":": 190, "_": 189, "'": 191, "*": 187, "Q": 81, "W": 87, "E": 69, "R": 82, "T": 84, "Z": 90, "S": 83, "A": 65, "D": 68, "I": 73, "U": 85, "O": 79, "Y": 89, "X": 88, "C": 67, "F": 70, "V": 86, "G": 71, "B": 66, "H": 72, "N": 78, "J": 74, "M": 77, "K": 75, "L": 76, "P": 80, "Ö": 192, "Ä": 222, "Ü": 186, "!": 49, "\"": 50, "§": 51, "$": 52, "%": 53, "&": 54, "/": 55, "(": 56, ")": 57, "=": 48, "?": 219, "°": 220 }
     switch (keyDown.keyCode) {
 
-        case 65: // 'a'
+        case keyCodes['a']:
+            console.log("'a' key pressed")
             altView = (altView + 1) % 3;
             triggerSearch();
             break;
 
-        case 67: // 'c'
+        case keyCodes['c']:
             copyToClipboard(await getTextForClipboard());
             break;
 
-        case 69: // 'e', cantonese tts
-            if (config.ttsEnabled == 'yes') {
+        case keyCodes['e']:
+            if (config.ttsEnabled === 'yes') {
                 ttsCantonese(window.getSelection().toString());
             }
             break;
-        case 87: // 'w', mandarin tts
-            if (config.ttsEnabled == 'yes') {
+        case keyCodes['w']:
+            if (config.ttsEnabled === 'yes') {
                 ttsMandarin(window.getSelection().toString());
             }
             break;
 
-        case 66: // 'b'
+        case keyCodes['b']:
             {
                 let offset = selStartDelta;
                 for (let i = 0; i < 10; i++) {
@@ -988,8 +993,10 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 71: // 'g'
+        case keyCodes['g']:
+            console.log("Grammar", config.grammar, "Saved Search Result", savedSearchResults)
             if (config.grammar !== 'no' && savedSearchResults.grammar) {
+                console.log("Open grammar page")
                 let sel = encodeURIComponent(window.getSelection().toString());
 
                 // https://resources.allsetlearning.com/chinese/grammar/%E4%B8%AA
@@ -1002,10 +1009,10 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 77: // 'm'
+        case keyCodes['m']:
             selStartIncrement = 1;
         // falls through
-        case 78: // 'n'
+        case keyCodes['n']:
             for (let i = 0; i < 10; i++) {
                 selStartDelta += selStartIncrement;
                 let ret = triggerSearch();
@@ -1020,7 +1027,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 82: // 'r'
+        case keyCodes['r']:
             {
                 let entries = [];
                 for (let j = 0; j < savedSearchResults.length; j++) {
@@ -1043,7 +1050,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 83: // 's'
+        case keyCodes['s']:
             {
 
                 // https://www.skritter.com/vocab/api/add?from=Chrome&lang=zh&word=浏览&trad=瀏 覽&rdng=liú lǎn&defn=to skim over; to browse
@@ -1068,7 +1075,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 84: // 't'
+        case keyCodes['t']:
             {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1083,19 +1090,19 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 88: // 'x'
+        case keyCodes['x']:
             altView = 0;
             popY -= 20;
             triggerSearch();
             break;
 
-        case 89: // 'y'
+        case keyCodes['y']:
             altView = 0;
             popY += 20;
             triggerSearch();
             break;
 
-        case 49: // '1'
+        case keyCodes['1']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1110,7 +1117,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 50: // '2'
+        case keyCodes['2']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1125,7 +1132,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 51: // '3'
+        case keyCodes['3']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1140,7 +1147,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 52: // '4'
+        case keyCodes['4']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1155,7 +1162,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 53: // '5'
+        case keyCodes['5']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1170,7 +1177,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 54: // '6'
+        case keyCodes['6']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());
@@ -1186,7 +1193,7 @@ async function onKeyDown(keyDown) {
             }
             break;
 
-        case 55: // '7'
+        case keyCodes['7']:
             if (keyDown.altKey) {
                 let sel = encodeURIComponent(
                     window.getSelection().toString());

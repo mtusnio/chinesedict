@@ -166,3 +166,28 @@ test("pressing the grammar shortcut loads up grammar wiki", async () => {
     const grammarPage = await utils.findOpenedPage(browser, `https://resources.allsetlearning.com/chinese/grammar/%E6%9C%89`)
     expect(grammarPage).not.toBeNull()
 })
+
+test("pressing the skritter shortcut loads up legacy skritter", async () => {
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.wait(500)
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+
+    await page.keyboard.press("s")
+    // TODO: figure out how to avoid this long wait while skritter is redirecting
+    await utils.wait(5000)
+
+    // Test is not logged in hence it will end up being redirected to skritter login page
+    const skritterPage = await utils.findOpenedPage(browser, `https://skritter.com/login`)
+    expect(skritterPage).not.toBeNull()
+})

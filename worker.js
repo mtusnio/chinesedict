@@ -49,7 +49,6 @@
 import * as actions from "./lib/actions.js";
 import * as configuration from "./lib/configuration.js";
 import * as setup from "./lib/setup.js";
-import * as wordlist from "./lib/wordlist.js";
 
 let tabIDs = {};
 
@@ -131,38 +130,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, responseCallback
             break;
 
         case 'add': {
-            Promise.all(wordlist.get(), configuration.get()).then(([wordlist, config]) => {
-                let saveFirstEntryOnly = config['saveToWordList'] === 'firstEntryOnly';
+            actions.addtoWordlist(request.entries)
 
-
-                for (let i in request.entries) {
-                    let entry = {};
-                    entry.timestamp = Date.now();
-                    entry.simplified = request.entries[i].simplified;
-                    entry.traditional = request.entries[i].traditional;
-                    entry.pinyin = request.entries[i].pinyin;
-                    entry.definition = request.entries[i].definition;
-                    entry.jyutping = request.entries[i].jyutping;
-
-                    wordlist.push(entry);
-
-                    if (saveFirstEntryOnly) {
-                        break;
-                    }
-                }
-                localStorage['wordlist'] = JSON.stringify(wordlist);
-
-                tabID = tabIDs['wordlist'];
-                if (tabID) {
-                    chrome.tabs.get(tabID, function (tab) {
-                        if (tab) {
-                            chrome.tabs.reload(tabID);
-                        }
-                    });
-                }
-            })
+            return true
         }
-            break;
 
         default:
         // ignore

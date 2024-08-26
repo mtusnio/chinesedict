@@ -38,8 +38,10 @@ global.chrome = {
             clear: async () => { _storage = {}; },
             set: async (obj) => { _storage = { ..._storage, ...obj, }; },
             get: async (keys) => {
-                const ret = { [keys[0]]: _storage[keys[0]] };
-                return ret;
+                return keys.reduce(function (map, key) {
+                    map[key] = _storage[key];
+                    return map;
+                }, {});
             }
         }
     },

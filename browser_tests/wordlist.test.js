@@ -19,7 +19,7 @@ afterEach(async () => {
 });
 
 test("pressing wordlist button shows popup and adds the word to the wordlist", async () => {
-    const page = await browser.newPage();
+    let page = await browser.newPage();
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
@@ -49,7 +49,7 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
     await utils.wait(1000)
 
 
-    const wordlistPage = await (await browser.pages()).findLast(async (page) => {
+    page = await (await browser.pages()).findLast(async (page) => {
         const url = await page.url()
 
         if (url == `chrome-extension://${utils.EXTENSION_ID}/options.html`) {
@@ -58,8 +58,26 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
         return false
     })
 
-    await wordlistPage.bringToFront()
-    expect(await wordlistPage).not.toEqual(undefined)
+    await page.bringToFront()
+    expect(await page).not.toEqual(undefined)
 
-    await wordlistPage.waitForSelector("::-p-text(有)", { timeout: 2000 })
+    await page.waitForSelector("::-p-text(有)", { timeout: 2000 })
+
+    const evenInnerHtml = await page.$$eval("#words .even", (elements) => {
+        return elements.map(e => e.innerHTML)
+    })
+    const oddInnerHtml = await page.$$eval("#words .odd", (elements) => {
+        return elements.map(e => e.innerHTML)
+    })
+
+    expect(evenInnerHtml).toEqual(
+        [
+            "<td class=\"sorting_1\">1</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>has or have</td><td><i>Edit</i></td>",
+            "<td class=\"sorting_1\">3</td><td>有</td><td>有</td><td>yǒu</td><td>jau6</td><td>also/again</td><td><i>Edit</i></td>"
+        ])
+    expect(oddInnerHtml).toEqual(
+        [
+            "<td class=\"sorting_1\">0</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be</td><td><i>Edit</i></td>",
+            "<td class=\"sorting_1\">2</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</td><td><i>Edit</i></td>",
+        ])
 })

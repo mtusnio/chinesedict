@@ -48,15 +48,7 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
 
     await utils.wait(1000)
 
-
-    page = await (await browser.pages()).findLast(async (page) => {
-        const url = await page.url()
-
-        if (url == `chrome-extension://${utils.EXTENSION_ID}/options.html`) {
-            return true
-        }
-        return false
-    })
+    page = await utils.findOpenedPage(browser, `chrome-extension://${utils.EXTENSION_ID}/options.html`)
 
     await page.bringToFront()
     expect(await page).not.toEqual(undefined)

@@ -137,3 +137,25 @@ test("prints out a different HTML when hovering over 有 in an HTML-rich site wi
 
     expect(windowHTML).toEqual("<span class=\"w-hanzi\">有</span>&nbsp;<br><span class=\"tone3 w-zhuyin\">ㄧㄡˇ</span><br><span class=\"w-def\">to have/there is/there are/to exist/to be</span><br>")
 })
+
+test("pressing the grammar shortcut loads up grammar wiki", async () => {
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.wait(500)
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+
+    await page.keyboard.press("g")
+
+    const grammarPage = await utils.findOpenedPage(browser, `https://resources.allsetlearning.com/chinese/grammar/%E6%9C%89`)
+    expect(grammarPage).not.toBeNull()
+})

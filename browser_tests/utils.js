@@ -64,5 +64,22 @@ async function wait(miliseconds) {
     await new Promise((r) => setTimeout(r, miliseconds));
 }
 
-export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, getExtensionStatus, setupBrowser, toggleExtension, wait };
+async function findOpenedPage(browser, url) {
+    const page = await (await browser.pages()).findLast(async (page) => {
+        const pageURL = await page.url()
+
+        if (pageURL == url) {
+            return true
+        }
+        return false
+    })
+
+    if (page == undefined) {
+        return null
+    }
+
+    return page
+}
+
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, setupBrowser, toggleExtension, wait };
 

@@ -2,6 +2,7 @@ import * as puppeteer from "puppeteer";
 
 const EXTENSION_PATH = './';
 const EXTENSION_ID = "aoofnmlljjgifabglpelnbmipdfnfflk"
+const ZHONGWEN_WINDOW_SELECTOR = "#zhongwen-window"
 
 async function setupBrowser() {
     let headless = true
@@ -63,5 +64,5 @@ async function wait(miliseconds) {
     await new Promise((r) => setTimeout(r, miliseconds));
 }
 
-export { EXTENSION_ID, getExtensionStatus, setupBrowser, toggleExtension, wait };
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, getExtensionStatus, setupBrowser, toggleExtension, wait };
 

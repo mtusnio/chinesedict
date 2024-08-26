@@ -9,7 +9,6 @@ jest.retryTimes(3);
 let browser = null;
 let worker = null
 
-const zhongwenWindowSelector = "#zhongwen-window"
 
 beforeEach(async () => {
     const setupData = await utils.setupBrowser()
@@ -39,7 +38,7 @@ test("if extension ENABLED, popup appears when hovering over text in plain html"
     // Those coordinates might be screen dependent, but for now they pass on GitHub actions
     // and locally. If they start failng somewhere else, this needs to be revisited
     await page.mouse.move(40, 15)
-    const exists = !! await page.waitForSelector(zhongwenWindowSelector, { timeout: 6000 });
+    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
     expect(exists).toBe(true)
 })
 
@@ -55,7 +54,7 @@ test("if extension DISABLED, popup does not appear when hovering over text in pl
     // Those coordinates might be screen dependent, but for now they pass on GitHub actions
     // and locally. If they start failng somewhere else, this needs to be revisited
     await page.mouse.move(40, 15)
-    await expect(page.waitForSelector(zhongwenWindowSelector, { timeout: 3000 })).rejects.toThrow(TimeoutError)
+    await expect(page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 3000 })).rejects.toThrow(TimeoutError)
 })
 
 test("if extension DISABLED, popup does not appear when hovering over text in an HTML-rich site", async () => {
@@ -69,7 +68,7 @@ test("if extension DISABLED, popup does not appear when hovering over text in an
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    await expect(page.waitForSelector(zhongwenWindowSelector, { timeout: 3000 })).rejects.toThrow(TimeoutError)
+    await expect(page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 3000 })).rejects.toThrow(TimeoutError)
 })
 
 test("prints out a valid HTML when hovering over 有 in an HTML-rich site", async () => {
@@ -86,10 +85,10 @@ test("prints out a valid HTML when hovering over 有 in an HTML-rich site", asyn
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    const exists = !! await page.waitForSelector(zhongwenWindowSelector, { timeout: 6000 });
+    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
     expect(exists).toBe(true)
 
-    const windowHTML = await page.$eval(zhongwenWindowSelector, (element) => {
+    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
         return element.innerHTML
     })
 
@@ -129,10 +128,10 @@ test("prints out a different HTML when hovering over 有 in an HTML-rich site wi
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    const exists = !! await page.waitForSelector(zhongwenWindowSelector, { timeout: 6000 });
+    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
     expect(exists).toBe(true)
 
-    const windowHTML = await page.$eval(zhongwenWindowSelector, (element) => {
+    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
         return element.innerHTML
     })
 

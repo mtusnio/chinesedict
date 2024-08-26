@@ -426,10 +426,18 @@ async function makeHtml(result, showToneColors) {
 
     if (result === null || result.words.length === 0) return '';
 
-    const grammarIndex = result.words.findIndex((entry) => entry.grammar === true);
+    console.log("MakeHTML", result)
+    const grammarIndex = result.words.findIndex((word) => {
+        for (const entry of word.entries) {
+            if (entry.grammar === true) {
+                return true
+            }
+        }
+        return false
+    });
 
     result.words.forEach((word, index) => {
-        word.entries.forEach(async (entry) => {
+        word.entries.forEach(async (entry, entryIndex) => {
             if (config.simpTrad === 'auto') {
                 hanziClass = 'w-hanzi';
                 if (config.fontSize === 'small') {
@@ -492,7 +500,7 @@ async function makeHtml(result, showToneColors) {
             html += '<br><span class="' + defClass + '">' + entry.definition + '</span><br>';
 
             // Grammar
-            if (config.grammar !== 'no' && entry.grammar && grammarIndex === index) {
+            if (entryIndex == 0 && config.grammar !== 'no' && entry.grammar && grammarIndex === index) {
                 html += '<br><span class="grammar">Press "g" for grammar and usage notes.</span><br><br>';
             }
 
@@ -915,7 +923,8 @@ function onMouseMove(mouseMove) {
 
 
 async function onKeyDown(keyDown) {
-
+    const config = await getConfig()
+    console.log("onKeyDown")
     if (keyDown.ctrlKey || keyDown.metaKey) {
         return;
     }

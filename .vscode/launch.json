@@ -21,12 +21,12 @@
             ],
             "env": {
                 "HEADLESS": "false",
-                "DO_NOT_CLOSE": "true"
+                "DO_NOT_CLOSE": "true",
+                "RETRY_TIMES": "0",
             },
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "disableOptimisticBPs": true,
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "windows": {
                 "program": "${workspaceFolder}/node_modules/jest/bin/jest"

@@ -8,10 +8,10 @@ async function setupBrowser() {
     let headless = true
     let dumpio = false
     if (process.env["HEADLESS"]) {
-        headless = process.env["HEADLESS"] == "true"
+        headless = process.env["HEADLESS"] === "true"
     }
     if (process.env["DUMPIO"]) {
-        dumpio = process.env["DUMPIO"] == "true"
+        dumpio = process.env["DUMPIO"] === "true"
     }
 
 
@@ -65,21 +65,24 @@ async function wait(miliseconds) {
 }
 
 async function findOpenedPage(browser, url) {
-    const page = await (await browser.pages()).findLast(async (page) => {
+    const allPages = await browser.pages()
+    for (const page of allPages) {
         const pageURL = await page.url()
 
-        if (pageURL == url) {
-            return true
+        if (pageURL === url) {
+            return page
         }
-        return false
-    })
-
-    if (page == undefined) {
-        return null
     }
 
-    return page
+    return null
 }
 
-export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, setupBrowser, toggleExtension, wait };
+async function getRetryTimes() {
+    if (process.env["RETRY_TIMES"]) {
+        return +process.env["RETRY_TIMES"]
+    }
+
+    return 3
+}
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, toggleExtension, wait };
 

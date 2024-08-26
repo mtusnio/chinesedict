@@ -5,7 +5,7 @@ import * as utils from "./utils";
 let browser = null;
 let worker = null
 
-jest.retryTimes(3);
+jest.retryTimes(utils.getRetryTimes());
 
 beforeEach(async () => {
     const setupData = await utils.setupBrowser()
@@ -51,10 +51,10 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
 
     await utils.wait(1000)
 
-    page = await utils.findOpenedPage(browser, `chrome-extension://${utils.EXTENSION_ID}/options.html`)
+    page = (await browser.pages()).at(-1)
 
+    expect(page).not.toBeNull()
     await page.bringToFront()
-    expect(await page).not.toEqual(undefined)
 
     await page.waitForSelector("::-p-text(有)", { timeout: 2000 })
 

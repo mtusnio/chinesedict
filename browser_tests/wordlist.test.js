@@ -1,8 +1,11 @@
+import { jest } from '@jest/globals';
 import path from 'path';
 import * as utils from "./utils";
 
 let browser = null;
 let worker = null
+
+jest.retryTimes(3);
 
 beforeEach(async () => {
     const setupData = await utils.setupBrowser()

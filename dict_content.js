@@ -391,13 +391,9 @@ function findPreviousTextNode(root, previous) {
     }
 }
 
-function copyToClipboard(data) {
-    chrome.runtime.sendMessage({
-        'type': 'copy',
-        'data': data
-    });
-
-    showPopup('Copied to clipboard', null, -1, -1);
+async function copyToClipboard(data) {
+    await navigator.clipboard.writeText(data)
+    await showPopup('Copied to clipboard', null, -1, -1);
 }
 
 function ttsAny(data, language) {
@@ -962,7 +958,7 @@ async function onKeyDown(keyDown) {
             break;
 
         case keyCodes['c']:
-            copyToClipboard(await getTextForClipboard());
+            await copyToClipboard(await getTextForClipboard());
             break;
 
         case keyCodes['e']:

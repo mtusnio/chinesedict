@@ -117,18 +117,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, responseCallback
             }
             break;
 
-        case 'copy': {
-            let txt = document.createElement('textarea');
-            txt.style.position = "absolute";
-            txt.style.left = "-100%";
-            txt.value = request.data;
-            document.body.appendChild(txt);
-            txt.select();
-            document.execCommand('copy');
-            document.body.removeChild(txt);
-        }
-            break;
-
         case 'add': {
             actions.addtoWordlist(request.entries)
 

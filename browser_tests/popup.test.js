@@ -191,3 +191,48 @@ test("pressing the skritter shortcut loads up legacy skritter", async () => {
     const skritterPage = await utils.findOpenedPage(browser, `https://skritter.com/login`)
     expect(skritterPage).not.toBeNull()
 })
+
+test("pressing the copy shortcut puts the definition in clipboard", async () => {
+    const testFileURL = `file://${path.resolve()}/browser_tests/testdata/wiki-you.html`
+
+    const page = await browser.newPage();
+
+    const context = browser.defaultBrowserContext();
+    await context.overridePermissions(testFileURL, [
+        "clipboard-read",
+    ]);
+
+    await page.goto(testFileURL, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.wait(500)
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+
+    await page.keyboard.press("c")
+    await utils.wait(500)
+
+    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+
+    expect(windowHTML).toEqual("Copied to clipboard")
+
+    const clipboardContent = await page.evaluate(async () => {
+        const text = navigator.clipboard.readText();
+        return text;
+    });
+
+    expect(clipboardContent).toEqual(`有	有	jau5	yǒu	to have/there is/there are/to exist/to be
+有	有	jau5	yǒu	has or have
+有	有	jau5	yǒu	to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy
+有	有	jau6	yǒu	also/again
+`)
+})

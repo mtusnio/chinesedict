@@ -43,7 +43,8 @@
   "permissions": [
     "contextMenus",
     "tabs",
-    "storage"
+    "storage",
+    "clipboardWrite"
   ],
   "commands": {
     "_execute_action": {

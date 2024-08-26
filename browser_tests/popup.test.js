@@ -236,3 +236,63 @@ test("pressing the copy shortcut puts the definition in clipboard", async () => 
 有	有	jau6	yǒu	also/again
 `)
 })
+
+test.each([
+    { key: "1", url: "https://english.dict.naver.com/english-chinese-dictionary/#/search?query=%E6%9C%89" },
+    { key: "2", url: "https://forvo.com/search/%E6%9C%89/zh/" },
+    { key: "3", url: "https://dict.cn/%E6%9C%89" },
+    { key: "4", url: "https://www.iciba.com/word?w=%E6%9C%89" },
+    { key: "5", url: "https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=%E6%9C%89" },
+    { key: "6", url: "https://www.moedict.tw/~%E6%9C%89" }
+])("pressing alt + $key opens up dictionary entry at $url", async ({ key, url }) => {
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.wait(500)
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+
+    await page.keyboard.down('AltLeft')
+    await page.keyboard.press(key)
+    await page.keyboard.up('AltLeft')
+
+    // TODO: figure out how to avoid this long wait while redirecting
+    await utils.wait(3000)
+
+    const dictionaryPage = await utils.findOpenedPage(browser, url)
+    expect(dictionaryPage).not.toBeNull()
+})
+
+test("pressing 't' opens up Tatoeba", async () => {
+    const url = "https://tatoeba.org/en/sentences/search?from=cmn&to=eng&query=%E6%9C%89"
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.wait(500)
+
+    await page.setViewport({ width: 1280, height: 720 });
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced ::-p-text(今天) em'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+
+    await page.keyboard.press('t')
+
+    // TODO: figure out how to avoid this long wait while redirecting
+    await utils.wait(3000)
+
+    const dictionaryPage = await utils.findOpenedPage(browser, url)
+    expect(dictionaryPage).not.toBeNull()
+})

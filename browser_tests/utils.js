@@ -82,7 +82,7 @@ async function getRetryTimes() {
         return +process.env["RETRY_TIMES"]
     }
 
-    return 3
+    return 2
 }
 export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, toggleExtension, wait };
 

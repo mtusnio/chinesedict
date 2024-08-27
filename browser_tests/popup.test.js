@@ -137,3 +137,105 @@ test("prints out a different HTML when hovering over 有 in an HTML-rich site wi
 
     expect(windowHTML).toEqual("<span class=\"w-hanzi\">有</span>&nbsp;<br><span class=\"tone3 w-zhuyin\">ㄧㄡˇ</span><br><span class=\"w-def\">to have/there is/there are/to exist/to be</span><br>")
 })
+
+test("navigation forward and backwards moves between different words", async () => {
+    const page = await browser.newPage();
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await page.setViewport({ width: 1280, height: 720 });
+
+    await utils.wait(500)
+
+    const targetSelector = 'li.spaced em ::-p-text(我)'
+    await page.waitForSelector(targetSelector, { timeout: 2000 })
+
+    await page.locator(targetSelector).hover();
+
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
+
+    const htmls = {
+        "我": "<span class=\"w-hanzi-small\">我</span>&nbsp;<span class=\"w-pinyin-small tone3\">wǒ</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">ngo5</span><br><span class=\"w-def-small\">I/me/my</span><br><span class=\"w-hanzi-small\">我</span>&nbsp;<span class=\"w-pinyin-small tone3\">wǒ</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">ngo5</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">I/me/my/us/we/our/self</span><br>",
+        "爸爸": "<span class=\"w-hanzi-small\">爸爸</span>&nbsp;<span class=\"w-pinyin-small tone4\">bà</span>&nbsp;<span class=\"w-pinyin-small tone5\">ba</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">baa1 baa1</span><br><span class=\"w-def-small\">(informal) father/CL:個|个[ge4],位[wei4]</span><br><span class=\"w-hanzi-small\">爸</span>&nbsp;<span class=\"w-pinyin-small tone4\">bà</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">baa1</span><br><span class=\"w-def-small\">father/dad/pa/papa</span><br>",
+        "爸": "<span class=\"w-hanzi-small\">爸</span>&nbsp;<span class=\"w-pinyin-small tone4\">bà</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">baa1</span><br><span class=\"w-def-small\">father/dad/pa/papa</span><br>",
+        "没": "<span class=\"w-hanzi-small\">沒</span>&nbsp;<span class=\"w-hanzi-small\">没</span>&nbsp;<span class=\"w-pinyin-small tone2\">méi</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">mut6</span><br><span class=\"w-def-small\">(negative prefix for verbs)/have not/not</span><br><br><span class=\"grammar\">Press \"g\" for grammar and usage notes.</span><br><br><span class=\"w-hanzi-small\">沒</span>&nbsp;<span class=\"w-hanzi-small\">没</span>&nbsp;<span class=\"w-pinyin-small tone4\">mò</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">mut6</span><br><span class=\"w-def-small\">drowned/to end/to die/to inundate</span><br><span class=\"w-hanzi-small\">沒</span>&nbsp;<span class=\"w-hanzi-small\">没</span>&nbsp;<span class=\"w-pinyin-small tone2\">méi</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">mut6</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">(determiner) 1. No (e.g. no fun); (preposition) Be without; (adjective) submerged</span><br><span class=\"w-hanzi-small\">沒</span>&nbsp;<span class=\"w-hanzi-small\">没</span>&nbsp;<span class=\"w-pinyin-small tone2\">méi</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">mut6/mei6</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">(negative prefix for verbs)/have not/not/to be inferior to/to sink/to submerge/to rise beyond/to confiscate/to disappear/to come to an end</span><br>",
+        "有": "<span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><br><span class=\"w-def-small\">to have/there is/there are/to exist/to be</span><br><br><span class=\"grammar\">Press \"g\" for grammar and usage notes.</span><br><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">has or have</span><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</span><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau6</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">also/again</span><br>",
+        "工作": "<span class=\"w-hanzi-small\">工作</span>&nbsp;<span class=\"w-pinyin-small tone1\">gōng</span>&nbsp;<span class=\"w-pinyin-small tone4\">zuò</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gung1 zok3</span><br><span class=\"w-def-small\">to work/(of a machine) to operate/job/work/task/CL:個|个[ge4],份[fen4],項|项[xiang4]</span><br><span class=\"w-hanzi-small\">工</span>&nbsp;<span class=\"w-pinyin-small tone1\">gōng</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gung1</span><br><span class=\"w-def-small\">work/worker/skill/profession/trade/craft/labor</span><br><span class=\"w-hanzi-small\">工</span>&nbsp;<span class=\"w-pinyin-small tone1\">gōng</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gung1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">(noun) unit of counting the time in working shift</span><br><span class=\"w-hanzi-small\">工</span>&nbsp;<span class=\"w-pinyin-small tone1\">gōng</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gung1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">work/worker/skill/profession/trade/craft/labor/man-days/skilled/skillful/dextrous/good at/expert at/shift/time used in doing a piece of work/engineering or building project/defense work/fine/KangXi radical 48</span><br>",
+    }
+
+    let windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["我"])
+
+    await page.keyboard.press('n')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["爸爸"])
+
+    await page.keyboard.press('m')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["爸"])
+
+    await page.keyboard.press('n')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["没"])
+
+    await page.keyboard.press('n')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["有"])
+
+    await page.keyboard.press('n')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["工作"])
+
+    await page.keyboard.press('b')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["有"])
+
+    await page.keyboard.press('b')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["没"])
+
+    await page.keyboard.press('b')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["爸"])
+
+    await page.keyboard.press('b')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["爸爸"])
+
+    await page.keyboard.press('b')
+    await utils.wait(300)
+    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    expect(windowHTML).toEqual(htmls["我"])
+})

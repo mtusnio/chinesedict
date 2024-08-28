@@ -85,8 +85,7 @@ test("prints out a valid HTML when hovering over 有 in an HTML-rich site", asyn
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
-    expect(exists).toBe(true)
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
 
     const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
         return element.innerHTML

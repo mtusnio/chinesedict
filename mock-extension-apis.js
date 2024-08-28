@@ -47,6 +47,13 @@ global.chrome = {
     },
     windows: {
         getAll: () => { throw Error("Not implemented") }
+    },
+    contextMenus: {
+        create: () => { throw Error("Not implemented") },
+        removeAll: () => { throw Error("Not implemented") },
+        onClicked: {
+            addListener: () => { throw Error("Not implemented") }
+        }
     }
 };
 

@@ -21,6 +21,56 @@ afterEach(async () => {
     }
 });
 
+test("opening the wordlist with pre-existing entries displays then properly", async () => {
+    const page = await browser.newPage();
+
+    await worker.evaluate(async () => {
+        const fakeDate = new Date('2024-01-01')
+        await chrome.storage.local.set(
+            {
+                "wordlist": [{
+                    timestamp: fakeDate.getTime(),
+                    simplified: "水",
+                    traditional: "水",
+                    pinyin: "shui3",
+                    definition: "water",
+                    jyutping: "seoi2"
+                },
+                {
+                    timestamp: fakeDate.getTime(),
+                    simplified: "水",
+                    traditional: "水",
+                    pinyin: "shui1",
+                    definition: "another water",
+                    jyutping: "seoi3"
+                }]
+            })
+    })
+
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.bringToFront();
+
+    await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
+
+    const evenInnerHTML = await page.$$eval("#words .even", (elements) => {
+        return elements.map(e => e.innerHTML)
+    })
+
+    const oddInnerHTML = await page.$$eval("#words .odd", (elements) => {
+        return elements.map(e => e.innerHTML)
+    })
+
+    expect(oddInnerHTML).toEqual(
+        [
+            "<td class=\"sorting_1\">0</td><td>水</td><td>水</td><td>shui3</td><td>seoi2</td><td>water</td><td><i>Edit</i></td>",
+        ])
+    expect(evenInnerHTML).toEqual(
+        [
+            "<td class=\"sorting_1\">1</td><td>水</td><td>水</td><td>shui1</td><td>seoi3</td><td>another water</td><td><i>Edit</i></td>",
+        ])
+})
+
+
 test("pressing wordlist button shows popup and adds the word to the wordlist", async () => {
     let page = await browser.newPage();
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });

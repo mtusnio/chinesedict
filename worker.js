@@ -52,6 +52,10 @@ import * as setup from "./lib/setup.js";
 
 let tabIDs = {};
 
+chrome.runtime.onInstalled.addListener(async () => {
+    await setup.install()
+});
+
 chrome.action.onClicked.addListener(setup.activateExtensionToggle);
 
 chrome.tabs.onActivated.addListener(activeInfo => actions.enableTab(activeInfo.tabId));

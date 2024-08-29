@@ -187,9 +187,8 @@ $(document).ready(async function () {
                 content += '\t';
             }
             content += entry.definition;
-            content += '\t';
             content += entry.notes.replace('<i>Edit</i>', '').replace(/[\r\n]/gm, ' ');
-            content += '\r\n';
+            content += '\n';
         }
 
         let saveBlob = new Blob([content], { "type": "text/plain" });

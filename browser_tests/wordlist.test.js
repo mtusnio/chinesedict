@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import * as fs from "node:fs/promises";
 import path from 'path';
 import * as utils from "./utils";
 
@@ -21,9 +22,7 @@ afterEach(async () => {
     }
 });
 
-test("opening the wordlist with pre-existing entries displays then properly", async () => {
-    const page = await browser.newPage();
-
+async function createEntries() {
     await worker.evaluate(async () => {
         const fakeDate = new Date('2024-01-01')
         await chrome.storage.local.set(
@@ -43,9 +42,16 @@ test("opening the wordlist with pre-existing entries displays then properly", as
                     pinyin: "shui1",
                     definition: "another water",
                     jyutping: "seoi3"
-                }]
+                },]
             })
     })
+
+}
+
+test("opening the wordlist with pre-existing entries displays then properly", async () => {
+    const page = await browser.newPage();
+
+    await createEntries()
 
     await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
     await page.bringToFront();
@@ -83,13 +89,13 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
     await utils.wait(500)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
-    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.waitForSelector(targetSelector, { timeout: 2000 })
     await page.locator(targetSelector).hover();
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
 
     await page.keyboard.press("r")
     await utils.wait(500)
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
     const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
         return element.innerHTML
     })
@@ -125,4 +131,49 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
             "<td class=\"sorting_1\">0</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be</td><td><i>Edit</i></td>",
             "<td class=\"sorting_1\">2</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</td><td><i>Edit</i></td>",
         ])
+})
+
+test("saving words to a text file exports them correctly", async () => {
+    const page = await browser.newPage();
+
+    await createEntries()
+
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.bringToFront();
+
+    await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
+    const directory = await fs.mkdtemp("/tmp/chinesedict-test")
+    try {
+        await page._client().send('Page.setDownloadBehavior', {
+            behavior: 'allow',
+            downloadPath: directory
+        });
+        await page.locator("#selectAll").click()
+        await page.locator("#saveList").click()
+        await utils.wait(1000)
+
+        const contents = await fs.readFile(`${directory}/ChineseDict-Words.txt`)
+        expect(contents.toString()).toEqual(`水	水	shui3	seoi2	water
+水	水	shui1	seoi3	another water
+`)
+    } finally {
+        await fs.rmdir(directory, { recursive: true })
+    }
+})
+
+test("deleting selected rows works correctly", async () => {
+    const page = await browser.newPage();
+
+    await createEntries()
+
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.bringToFront();
+
+    await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
+    await page.locator("#words .even").click()
+    await utils.wait(500)
+    await page.locator("#delete").click()
+
+    const rowCount = (await page.$$("#words tbody tr")).length
+    expect(rowCount).toEqual(1)
 })

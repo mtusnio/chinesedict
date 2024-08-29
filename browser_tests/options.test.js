@@ -1,10 +1,14 @@
 'use strict';
 
+import { jest } from '@jest/globals';
 import path from 'path';
 import * as utils from "./utils";
 
 let browser = null;
 let worker = null
+
+
+jest.retryTimes(utils.getRetryTimes());
 
 beforeEach(async () => {
     const setupData = await utils.setupBrowser()
@@ -174,9 +178,9 @@ describe("the options page", function () {
         await utils.wait(500)
 
         const targetSelector = 'li.spaced ::-p-text(今天) em'
-        await page.waitForSelector(targetSelector, { timeout: 6000 })
+        await page.waitForSelector(targetSelector, { timeout: 2000 })
         await page.locator(targetSelector).hover();
-        await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
+        await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
 
         const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
             return element.innerHTML

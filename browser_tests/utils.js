@@ -95,7 +95,7 @@ async function getRetryTimes() {
         return +process.env["RETRY_TIMES"]
     }
 
-    return 2
+    return 3
 }
 
 async function getZhongwenWindowContent(page) {

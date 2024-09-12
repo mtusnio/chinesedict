@@ -22,7 +22,7 @@ afterEach(async () => {
 
 test("help page opens properly", async () => {
     const page = await browser.newPage();
-    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/help.html`);
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/help.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
     await page.waitForSelector("h3")
 })

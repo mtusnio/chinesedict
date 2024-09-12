@@ -22,29 +22,47 @@ afterEach(async () => {
     }
 });
 
-async function createEntries() {
-    await worker.evaluate(async () => {
+async function createEntries(count) {
+    await worker.evaluate(async (count) => {
         const fakeDate = new Date('2024-01-01')
-        await chrome.storage.local.set(
-            {
-                "wordlist": [{
+        if (!count) {
+            await chrome.storage.local.set(
+                {
+                    "wordlist": [{
+                        timestamp: fakeDate.getTime(),
+                        simplified: "水",
+                        traditional: "水",
+                        pinyin: "shui3",
+                        definition: "water",
+                        jyutping: "seoi2"
+                    },
+                    {
+                        timestamp: fakeDate.getTime(),
+                        simplified: "水",
+                        traditional: "水",
+                        pinyin: "shui1",
+                        definition: "another water",
+                        jyutping: "seoi3"
+                    },]
+                })
+        } else {
+            const wordlist = []
+            for (let i = 0; i < count; i++) {
+                wordlist.push({
                     timestamp: fakeDate.getTime(),
                     simplified: "水",
                     traditional: "水",
                     pinyin: "shui3",
                     definition: "water",
                     jyutping: "seoi2"
-                },
+                })
+            }
+            await chrome.storage.local.set(
                 {
-                    timestamp: fakeDate.getTime(),
-                    simplified: "水",
-                    traditional: "水",
-                    pinyin: "shui1",
-                    definition: "another water",
-                    jyutping: "seoi3"
-                },]
-            })
-    })
+                    "wordlist": wordlist
+                })
+        }
+    }, count)
 
 }
 
@@ -53,7 +71,7 @@ test("opening the wordlist with pre-existing entries displays then properly", as
 
     await createEntries()
 
-    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
@@ -79,26 +97,21 @@ test("opening the wordlist with pre-existing entries displays then properly", as
 
 test("pressing wordlist button shows popup and adds the word to the wordlist", async () => {
     let page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-    await utils.wait(500)
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 2000 })
     await page.locator(targetSelector).hover();
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
+    await utils.getZhongwenWindowContent(page)
 
     await page.keyboard.press("r")
     await utils.wait(500)
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
-    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    const windowHTML = await utils.getZhongwenWindowContent(page)
 
     expect(windowHTML).toEqual("Added to word list.<p>Press Alt+W to open word list.</p>")
     await page.keyboard.down('AltLeft')
@@ -138,7 +151,7 @@ test("saving words to a text file exports them correctly", async () => {
 
     await createEntries()
 
-    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
@@ -166,7 +179,7 @@ test("deleting selected rows works correctly", async () => {
 
     await createEntries()
 
-    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`);
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
@@ -177,3 +190,49 @@ test("deleting selected rows works correctly", async () => {
     const rowCount = (await page.$$("#words tbody tr")).length
     expect(rowCount).toEqual(1)
 })
+
+
+test("changing display count changes the amount of rows", async () => {
+    const page = await browser.newPage();
+
+    await createEntries(35)
+
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await page.waitForSelector("::-p-text(水)", { timeout: 2000 })
+
+    let rowCount = (await page.$$("#words tbody tr")).length
+    expect(rowCount).toEqual(10)
+
+    await page.select("select[name='words_length']", "25")
+
+    rowCount = (await page.$$("#words tbody tr")).length
+    expect(rowCount).toEqual(25)
+})
+
+test("editing notes works", async () => {
+    const page = await browser.newPage();
+
+    await createEntries(1)
+
+    await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    const notesFieldSelector = ".row td:last-child"
+    const textAreaSelector = "#editNotes textArea"
+    const notesLastField = await page.waitForSelector(notesFieldSelector, { timeout: 2000 })
+    await notesLastField.click()
+
+    await page.waitForSelector(textAreaSelector, { visible: true, timeout: 2000 })
+    await page.type(textAreaSelector, 'My custom note', { delay: 20 })
+
+    const saveButton = await page.waitForSelector("#saveNotes")
+    await saveButton.click()
+
+    const notesHTML = await page.$eval(notesFieldSelector, (element) => {
+        return element.innerHTML
+    })
+    expect(notesHTML).toEqual("My custom note")
+})
+

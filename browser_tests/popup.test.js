@@ -26,76 +26,66 @@ afterEach(async () => {
 
 test("if extension ENABLED, popup appears when hovering over text in plain html", async () => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/plain.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-    await utils.wait(500)
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     // Those coordinates might be screen dependent, but for now they pass on GitHub actions
     // and locally. If they start failng somewhere else, this needs to be revisited
     await page.mouse.move(40, 15)
-    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
-    expect(exists).toBe(true)
+    const windowHTML = await utils.getZhongwenWindowContent(page)
+
+    expect(windowHTML).not.toBe("")
 })
 
 test("if extension DISABLED, popup does not appear when hovering over text in plain html", async () => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/plain.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
-
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     // Those coordinates might be screen dependent, but for now they pass on GitHub actions
     // and locally. If they start failng somewhere else, this needs to be revisited
     await page.mouse.move(40, 15)
-    await expect(page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 3000 })).rejects.toThrow(TimeoutError)
+    await expect(utils.getZhongwenWindowContent(page)).rejects.toThrow(TimeoutError)
 })
 
 test("if extension DISABLED, popup does not appear when hovering over text in an HTML-rich site", async () => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    await expect(page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 3000 })).rejects.toThrow(TimeoutError)
+    await expect(utils.getZhongwenWindowContent(page)).rejects.toThrow(TimeoutError)
 })
 
 test("prints out a valid HTML when hovering over 有 in an HTML-rich site", async () => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-    await utils.wait(500)
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
 
-    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    const windowHTML = await utils.getZhongwenWindowContent(page)
 
     expect(windowHTML).toEqual("<span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><br><span class=\"w-def-small\">to have/there is/there are/to exist/to be</span><br><br><span class=\"grammar\">Press \"g\" for grammar and usage notes.</span><br><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">has or have</span><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau5</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</span><br><span class=\"w-hanzi-small\">有</span>&nbsp;<span class=\"w-pinyin-small tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">jau6</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">also/again</span><br>")
 })
 
 test("prints out a different HTML when hovering over 有 in an HTML-rich site with a custom config set up", async () => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
@@ -119,20 +109,11 @@ test("prints out a different HTML when hovering over 有 in an HTML-rich site wi
     })
 
     await utils.toggleExtension(worker)
-    await utils.wait(500)
-
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
     await page.locator(targetSelector).hover();
-    const exists = !! await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 6000 });
-    expect(exists).toBe(true)
-
-    const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    const windowHTML = await utils.getZhongwenWindowContent(page)
 
     expect(windowHTML).toEqual("<span class=\"w-hanzi\">有</span>&nbsp;<br><span class=\"tone3 w-zhuyin\">ㄧㄡˇ</span><br><span class=\"w-def\">to have/there is/there are/to exist/to be</span><br>")
 })
@@ -148,94 +129,70 @@ test("navigation forward and backwards moves between different words", async () 
     }
 
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-    await page.setViewport({ width: 1280, height: 720 });
-
-    await utils.wait(500)
 
     const targetSelector = 'li.spaced em ::-p-text(我)'
     await page.waitForSelector(targetSelector, { timeout: 2000 })
 
     await page.locator(targetSelector).hover();
 
-    await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
+    let windowHTML = await utils.getZhongwenWindowContent(page)
 
-    let windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
     expect(windowHTML).toEqual(htmls["我"])
 
     await page.keyboard.press('n')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["爸爸"])
 
     await page.keyboard.press('m')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["爸"])
 
     await page.keyboard.press('n')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["没"])
 
     await page.keyboard.press('n')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["有"])
 
     await page.keyboard.press('n')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["工作"])
 
     await page.keyboard.press('b')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["有"])
 
     await page.keyboard.press('b')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["没"])
 
     await page.keyboard.press('b')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["爸"])
 
     await page.keyboard.press('b')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["爸爸"])
 
     await page.keyboard.press('b')
     await utils.wait(300)
-    windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-        return element.innerHTML
-    })
+    windowHTML = await utils.getZhongwenWindowContent(page)
     expect(windowHTML).toEqual(htmls["我"])
 })
 
@@ -245,7 +202,6 @@ test.each([
         selectors: [
             "#different-simplified-and-traditional #traditional .first",
             "#different-simplified-and-traditional #simplified .first",
-
         ],
         expectedHTML: "<span class=\"w-hanzi-small\">機會</span>&nbsp;<span class=\"w-hanzi-small\">机会</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;<span class=\"w-pinyin-small tone4\">huì</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1 wui6/wui2</span><br><span class=\"w-def-small\">opportunity/chance/occasion/CL:個|个[ge4]</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">Jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><br><span class=\"w-def-small\">surname Ji</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><br><span class=\"w-def-small\">machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic/CL:臺|台[tai2]</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">(noun) device</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic M: 台tái [台]/witty/handphone</span><br>",
         config: {},
@@ -272,6 +228,7 @@ test.each([
     },
 ])("$description", async ({ selectors, expectedHTML, config }) => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
     await page.goto(`file://${path.resolve()}/browser_tests/testdata/test-cases.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
     await page.bringToFront();
 
@@ -279,19 +236,15 @@ test.each([
         await chrome.storage.local.set(config)
     }, config)
     await utils.toggleExtension(worker)
-    await page.setViewport({ width: 1280, height: 720 });
-    await utils.wait(500)
 
     for (const targetSelector of selectors) {
         await page.waitForSelector(targetSelector, { timeout: 2000 })
+        // Without resetting the mouse position hovering on the second element
+        // often does not bring up the dictionary
+        await page.mouse.move(0, 0)
         await page.locator(targetSelector).hover();
 
-        await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
-        await utils.wait(500)
-
-        let windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-            return element.innerHTML
-        })
+        const windowHTML = await utils.getZhongwenWindowContent(page)
         expect(windowHTML).toEqual(expectedHTML)
     }
 })

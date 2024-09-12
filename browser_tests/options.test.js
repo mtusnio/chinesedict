@@ -43,7 +43,7 @@ async function clickAndTest(page, selector, expectedChecked) {
 describe("the options page", function () {
     it("loads properly default page", async () => {
         const page = await browser.newPage();
-        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
         await page.bringToFront();
 
         await testChecked(page, "input[name='popupColor'][value='yellow']", true)
@@ -86,7 +86,7 @@ describe("the options page", function () {
         page = await browser.newPage();
         await page.bringToFront();
 
-        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
 
         await testChecked(page, "input[name='popupColor'][value='blue']", true)
         await testChecked(page, "input[name='fontSize'][value='large']", true)
@@ -107,7 +107,7 @@ describe("the options page", function () {
 
         await page.bringToFront();
 
-        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
 
         await clickAndTest(page, "input[name='popupColor'][value='blue']", true)
         await clickAndTest(page, "input[name='fontSize'][value='large']", true)
@@ -164,27 +164,21 @@ describe("the options page", function () {
         const page = await browser.newPage();
 
         await utils.toggleExtension(worker)
-        await utils.wait(500)
 
         await page.bringToFront();
 
-        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`);
+        await page.setViewport({ width: 1280, height: 720 });
+        await page.goto(`chrome-extension://${utils.EXTENSION_ID}/options.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
 
         await clickAndTest(page, "input[name='popupColor'][value='blue']", true)
         await clickAndTest(page, "input[name='fontSize'][value='large']", true)
 
-        await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`);
-        await page.setViewport({ width: 1280, height: 720 });
-        await utils.wait(500)
+        await page.goto(`file://${path.resolve()}/browser_tests/testdata/wiki-you.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
 
         const targetSelector = 'li.spaced ::-p-text(今天) em'
         await page.waitForSelector(targetSelector, { timeout: 2000 })
         await page.locator(targetSelector).hover();
-        await page.waitForSelector(utils.ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
-
-        const windowHTML = await page.$eval(utils.ZHONGWEN_WINDOW_SELECTOR, (element) => {
-            return element.innerHTML
-        })
+        const windowHTML = await utils.getZhongwenWindowContent(page)
 
         expect(windowHTML).toEqual("<span class=\"w-hanzi\">有</span>&nbsp;<span class=\"w-pinyin tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin\">jau5</span><br><span class=\"w-def\">to have/there is/there are/to exist/to be</span><br><br><span class=\"grammar\">Press \"g\" for grammar and usage notes.</span><br><br><span class=\"w-hanzi\">有</span>&nbsp;<span class=\"w-pinyin tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin\">jau5</span><span style=\"float: right\" class=\"w-pinyin\">Cant.</span><br><span class=\"w-def\">has or have</span><br><span class=\"w-hanzi\">有</span>&nbsp;<span class=\"w-pinyin tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin\">jau5</span><span style=\"float: right\" class=\"w-pinyin\">Cant.</span><br><span class=\"w-def\">to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</span><br><span class=\"w-hanzi\">有</span>&nbsp;<span class=\"w-pinyin tone3\">yǒu</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin\">jau6</span><span style=\"float: right\" class=\"w-pinyin\">Cant.</span><br><span class=\"w-def\">also/again</span><br>")
     })

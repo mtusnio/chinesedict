@@ -7,9 +7,12 @@ const ZHONGWEN_WINDOW_SELECTOR = "#zhongwen-window"
 async function setupBrowser() {
     let headless = true
     let dumpio = false
-    if (process.env["HEADLESS"]) {
-        headless = process.env["HEADLESS"] === "true"
-    }
+    // if (process.env["HEADLESS"]) {
+    //     headless = process.env["HEADLESS"] === "true"
+    // }
+    // Apparently some tests do not pass reliably if headless is set to true,
+    // keeping this off by default for now
+    headless = false
     if (process.env["DUMPIO"]) {
         dumpio = process.env["DUMPIO"] === "true"
     }
@@ -58,23 +61,33 @@ async function toggleExtension(worker) {
         const tabs = await chrome.tabs.query({ active: true })
         await chrome.action.onClicked.dispatch(tabs[0]);
     });
+    await wait(1000)
 }
 
 async function wait(miliseconds) {
     await new Promise((r) => setTimeout(r, miliseconds));
 }
 
-async function findOpenedPage(browser, url) {
-    const allPages = await browser.pages()
-    for (const page of allPages) {
-        const pageURL = await page.url()
+async function findOpenedPage(browser, url, timeout) {
+    const STEP = 500
+    let curTime = 0
+    while (true) {
+        const allPages = await browser.pages()
+        for (const page of allPages) {
+            const pageURL = await page.url()
 
-        if (pageURL === url) {
-            return page
+            if (pageURL === url) {
+                return page
+            }
         }
-    }
 
-    return null
+        if (curTime >= timeout) {
+            return null
+        }
+
+        curTime += STEP
+        await wait(STEP)
+    }
 }
 
 async function getRetryTimes() {
@@ -84,5 +97,21 @@ async function getRetryTimes() {
 
     return 2
 }
-export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, toggleExtension, wait };
+
+async function getZhongwenWindowContent(page) {
+    await page.waitForSelector(ZHONGWEN_WINDOW_SELECTOR, { timeout: 2000 });
+    await page.waitForFunction(
+        selector => document.querySelector(selector).innerHTML.trim() != "",
+        {
+            timeout: 2000
+        },
+        ZHONGWEN_WINDOW_SELECTOR
+    );
+    const windowHTML = await page.$eval(ZHONGWEN_WINDOW_SELECTOR, (element) => {
+        return element.innerHTML
+    })
+    return windowHTML
+}
+
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, toggleExtension, wait, getZhongwenWindowContent };
 

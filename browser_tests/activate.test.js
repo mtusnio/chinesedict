@@ -44,8 +44,7 @@ test("toggling the extension on/off two times works", async () => {
     for (let i = 0; i < 2; i++) {
         // On
         await utils.toggleExtension(worker)
-        // Need a slight wait for the extension to trigger
-        await utils.wait(200)
+
         let status = await utils.getExtensionStatus(worker)
         expect(status.storage).toEqual({ "enabled": true })
         expect(status.badgeData).toEqual({
@@ -54,7 +53,6 @@ test("toggling the extension on/off two times works", async () => {
 
         // Off
         await utils.toggleExtension(worker)
-        await utils.wait(200)
         status = await utils.getExtensionStatus(worker)
         expect(status.storage).toEqual({ "enabled": false })
         expect(status.badgeData).toEqual({

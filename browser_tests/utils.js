@@ -31,9 +31,8 @@ async function setupBrowser() {
     });
 
     const workerTarget = await browser.waitForTarget(
-        // Assumes that there is only one service worker created by the extension and its URL ends with background.js.
         target =>
-            target.type() === 'service_worker'
+            target.type() === 'service_worker' && target.url().endsWith('worker.js')
     );
     const worker = await workerTarget.worker()
     return { browser, worker }

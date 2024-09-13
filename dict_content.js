@@ -633,7 +633,7 @@ function pinyinAndZhuyin(syllables, showToneColors, pinyinClass, config) {
 }
 
 let miniHelp = `
-    <span style="font-weight: bold;">Zhongwen Chinese-English Dictionary</span><br><br>
+    <span style="font-weight: bold;">Chinese-English Dictionary</span><br><br>
     <p>Keyboard shortcuts:<p>
     <table style="margin: 10px;" cellspacing=5 cellpadding=5>
     <tr><td><b>n&nbsp;:</b></td><td>&nbsp;Next word</td></tr>
@@ -1193,7 +1193,7 @@ chrome.runtime.onMessage.addListener(
                 }
                 break;
             case 'showHelp':
-                // showPopup(miniHelp);
+                showPopup(miniHelp);
                 break;
             default:
         }

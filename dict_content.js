@@ -636,7 +636,7 @@ let miniHelp = `
     <span style="font-weight: bold;">Chinese-English Dictionary</span><br><br>
     <p>Keyboard shortcuts:<p>
     <table style="margin: 10px;" cellspacing=5 cellpadding=5>
-    <tr><td><b>n&nbsp;:</b></td><td>&nbsp;Next word</td></tr>
+    <tbody><tr><td><b>n&nbsp;:</b></td><td>&nbsp;Next word</td></tr>
     <tr><td><b>b&nbsp;:</b></td><td>&nbsp;Previous character</td></tr>
     <tr><td><b>m&nbsp;:</b></td><td>&nbsp;Next character</td></tr>
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
@@ -656,21 +656,19 @@ let miniHelp = `
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
     <tr><td><b>w&nbsp;:</b></td><td>&nbsp;Play the Mandarin pronunciation of the selected character or phrase (if enabled in options)</td></tr>
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
-    </table>
+    </tbody></table>
     Look up selected text in online resources:
-    <table style="margin: 10px;" cellspacing=5 cellpadding=5>
-    <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
+    <table style="margin: 10px;" cellspacing="5" cellpadding="5">
+    <tbody><tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
     <tr><td><b>Alt + 1 :</b></td><td>&nbsp;LINE Dict</td></tr>
     <tr><td><b>Alt + 2 :</b></td><td>&nbsp;Forvo</td></tr>
     <tr><td><b>Alt + 3 :</b></td><td>&nbsp;Dict.cn</td></tr>
     <tr><td><b>Alt + 4&nbsp;:</b></td><td>&nbsp;iCIBA</td></tr>
     <tr><td><b>Alt + 5&nbsp;:</b></td><td>&nbsp;MDBG</td></tr>
-    <tr><td><b>Alt + 6&nbsp;:</b></td><td>&nbsp;JuKuu</td></tr>
-    <tr><td><b>Alt + 7&nbsp;:</b></td><td>&nbsp;MoE Dict</td></tr>
+    <tr><td><b>Alt + 6&nbsp;:</b></td><td>&nbsp;MoE Dict</td></tr>
     <tr><td><b>&nbsp;</b></td><td>&nbsp;</td></tr>
     <tr><td><b>t&nbsp;:</b></td><td>&nbsp;Tatoeba</td></tr>
-    </table>`;
-
+    </tbody></table>`;
 
 function triggerSearch() {
 

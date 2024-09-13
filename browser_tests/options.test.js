@@ -164,6 +164,7 @@ describe("the options page", function () {
         const page = await browser.newPage();
 
         await utils.toggleExtension(worker)
+        await utils.hideHelp(page)
 
         await page.bringToFront();
 

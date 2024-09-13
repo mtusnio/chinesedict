@@ -94,6 +94,7 @@ test("toggling the extension on/off two times works", async () => {
 
         // Off
         await utils.toggleExtension(worker)
+
         status = await utils.getExtensionStatus(worker)
         expect(status.storage).toEqual({ "enabled": false })
         expect(status.badgeData).toEqual({

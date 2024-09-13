@@ -61,7 +61,20 @@ async function toggleExtension(worker) {
         const tabs = await chrome.tabs.query({ active: true })
         await chrome.action.onClicked.dispatch(tabs[0]);
     });
+    // TODO: Get rid of this wait somehow
     await wait(1000)
+}
+
+async function hideHelp(page) {
+    // A bit heavy handed but solutions like mouse moving etc.
+    // did not work properly.
+    await page.evaluate(async () => {
+        let popup = document.getElementById('zhongwen-window');
+        if (popup) {
+            popup.remove()
+        }
+    });
+    await wait(100)
 }
 
 async function wait(miliseconds) {
@@ -113,5 +126,5 @@ async function getZhongwenWindowContent(page) {
     return windowHTML
 }
 
-export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, toggleExtension, wait, getZhongwenWindowContent };
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, hideHelp, toggleExtension, wait, getZhongwenWindowContent };
 

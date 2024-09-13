@@ -253,8 +253,7 @@ async function showPopup(html, elem, x, y, looseWidth) {
 function hidePopup() {
     let popup = document.getElementById('zhongwen-window');
     if (popup) {
-        popup.style.display = 'none';
-        popup.textContent = '';
+        popup.remove()
     }
 }
 

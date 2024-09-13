@@ -103,6 +103,7 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 2000 })

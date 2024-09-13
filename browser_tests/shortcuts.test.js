@@ -31,6 +31,7 @@ test("pressing the grammar shortcut loads up grammar wiki", async () => {
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -53,7 +54,7 @@ test("pressing the skritter shortcut loads up legacy skritter", async () => {
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
-
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -82,6 +83,7 @@ test("pressing the copy shortcut puts the definition in clipboard", async () => 
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -124,6 +126,7 @@ test.each([
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -147,6 +150,7 @@ test("pressing 't' opens up Tatoeba", async () => {
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })

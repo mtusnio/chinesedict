@@ -32,6 +32,7 @@ test("if extension ENABLED, popup appears when hovering over text in plain html"
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     // Those coordinates might be screen dependent, but for now they pass on GitHub actions
     // and locally. If they start failng somewhere else, this needs to be revisited
@@ -72,6 +73,7 @@ test("prints out a valid HTML when hovering over 有 in an HTML-rich site", asyn
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -109,6 +111,7 @@ test("prints out a different HTML when hovering over 有 in an HTML-rich site wi
     })
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced ::-p-text(今天) em'
     await page.waitForSelector(targetSelector, { timeout: 6000 })
@@ -135,6 +138,7 @@ test("navigation forward and backwards moves between different words", async () 
     await page.bringToFront();
 
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     const targetSelector = 'li.spaced em ::-p-text(我)'
     await page.waitForSelector(targetSelector, { timeout: 2000 })
@@ -236,6 +240,7 @@ test.each([
         await chrome.storage.local.set(config)
     }, config)
     await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     for (const targetSelector of selectors) {
         await page.waitForSelector(targetSelector, { timeout: 2000 })

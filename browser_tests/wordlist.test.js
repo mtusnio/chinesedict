@@ -171,7 +171,7 @@ test("saving words to a text file exports them correctly", async () => {
 水	水	shui1	seoi3	another water
 `)
     } finally {
-        await fs.rmdir(directory, { recursive: true })
+        await fs.rm(directory, { recursive: true })
     }
 })
 

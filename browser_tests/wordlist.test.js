@@ -69,6 +69,12 @@ async function createEntries(count) {
 test("opening the wordlist with pre-existing entries displays then properly", async () => {
     const page = await browser.newPage();
 
+    // The toggle here is primarily to allow for the extension to initialise
+    // properly, otherwise occassionally tests fail due to chrome.* objects
+    // being undefined
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
+
     await createEntries()
 
     await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
@@ -150,6 +156,13 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
 test("saving words to a text file exports them correctly", async () => {
     const page = await browser.newPage();
 
+    // The toggle here is primarily to allow for the extension to initialise
+    // properly, otherwise occassionally tests fail due to chrome.* objects
+    // being undefined
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
+
+
     await createEntries()
 
     await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
@@ -178,6 +191,12 @@ test("saving words to a text file exports them correctly", async () => {
 test("deleting selected rows works correctly", async () => {
     const page = await browser.newPage();
 
+    // The toggle here is primarily to allow for the extension to initialise
+    // properly, otherwise occassionally tests fail due to chrome.* objects
+    // being undefined
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
+
     await createEntries()
 
     await page.goto(`chrome-extension://${utils.EXTENSION_ID}/wordlist.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
@@ -195,6 +214,12 @@ test("deleting selected rows works correctly", async () => {
 
 test("changing display count changes the amount of rows", async () => {
     const page = await browser.newPage();
+
+    // The toggle here is primarily to allow for the extension to initialise
+    // properly, otherwise occassionally tests fail due to chrome.* objects
+    // being undefined
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     await createEntries(35)
 
@@ -214,6 +239,12 @@ test("changing display count changes the amount of rows", async () => {
 
 test("editing notes works", async () => {
     const page = await browser.newPage();
+
+    // The toggle here is primarily to allow for the extension to initialise
+    // properly, otherwise occassionally tests fail due to chrome.* objects
+    // being undefined
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
 
     await createEntries(1)
 

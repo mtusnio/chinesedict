@@ -35,7 +35,30 @@ async function setupBrowser() {
             target.type() === 'service_worker' && target.url().endsWith('worker.js')
     );
     const worker = await workerTarget.worker()
-    return { browser, worker }
+
+    while (true) {
+        // Wait until permissions have been granted and extensions
+        // has access to the various APIs
+        const apiIsReady = await worker.evaluate(() => {
+            if (chrome.storage === undefined || chrome.storage.local === undefined) {
+                return false
+            }
+
+            if (chrome.query == undefined) {
+                return false
+            }
+
+            return true
+        })
+
+        if (apiIsReady) {
+            break
+        }
+
+        await wait(500)
+
+        return { browser, worker }
+    }
 }
 
 async function getExtensionStatus(worker) {
@@ -125,5 +148,5 @@ async function getZhongwenWindowContent(page) {
     return windowHTML
 }
 
-export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, setupBrowser, hideHelp, toggleExtension, wait, getZhongwenWindowContent };
+export { EXTENSION_ID, EXTENSION_PATH, ZHONGWEN_WINDOW_SELECTOR, findOpenedPage, getExtensionStatus, getRetryTimes, getZhongwenWindowContent, hideHelp, setupBrowser, toggleExtension, wait };
 

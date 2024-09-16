@@ -62,6 +62,14 @@ describe("the options page", function () {
 
     it("loads all values changed", async () => {
         let page = await browser.newPage();
+
+        // The toggle here is primarily to allow for the extension to initialise
+        // properly, otherwise occassionally tests fail due to chrome.* objects
+        // being undefined
+        await utils.toggleExtension(worker)
+        await utils.hideHelp(page)
+
+
         await page.goto(`file://${path.resolve()}/browser_tests/testdata/plain.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
 
         await worker.evaluate(async () => {

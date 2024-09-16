@@ -12,7 +12,6 @@
                 "--experimental-vm-modules",
             ],
             "args": [
-                "--runInBand",
                 "--watchAll=false",
                 "--testNamePattern",
                 "${jest.testNamePattern}",

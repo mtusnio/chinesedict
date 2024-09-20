@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - 'main'
-      - 'manifest-v3'
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   unit-tests:
@@ -17,6 +18,23 @@ jobs:
           node-version: '20.x'
       - run: npm ci
       - run: npm run test-unit
+  script-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: ./scripts
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        working-directory: ./scripts
+        run: |
+          python -m unittest
   browser-tests:
     runs-on: ubuntu-latest
     steps:

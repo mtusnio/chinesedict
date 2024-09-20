@@ -4,32 +4,50 @@
  https://chrome.google.com/extensions/detail/kkmlkkjojmombglmlpbpapmhcaljjkde
  */
 
-/* global globalThis */
-
-let wordList = localStorage['wordlist'];
-
-let showZhuyin = localStorage['zhuyin'] === 'yes';
-let showJyutping = localStorage['jyutpingEnabled'] || 'yes';
-let showPinyin = localStorage['pinyinEnabled'] || 'yes';
-
-const NOTES_COLUMN =  7;
-
-let entries;
-if (wordList) {
-    entries = JSON.parse(wordList);
-    entries.forEach(e => {
-        e.timestamp = e.timestamp || 0;
-        e.notes = (e.notes || '<i>Edit</i>');
-        e.zhuyin = convert2Zhuyin(e.pinyin);
-    });
-    // show new entries first
-    entries.sort((e1, e2) => e2.timestamp - e1.timestamp);
-    entries.forEach((e, i) => e.id = i);
-} else {
-    entries = [];
+async function getConfig() {
+    return await chrome.storage.local.get([
+        "popupColor",
+        "toneColors",
+        "fontSize",
+        "skritterTLD",
+        "zhuyin",
+        "grammar",
+        "simpTrad",
+        "toneColorScheme",
+        "cantoneseEntriesEnabled",
+        "jyutpingEnabled",
+        "pinyinEnabled",
+        "ttsEnabled",
+        "saveToWordList"
+    ]);
 }
 
-function showListIsEmptyNotice() {
+async function getEntries() {
+    const entries = (await chrome.storage.local.get(["wordlist"]))["wordlist"]
+
+    if (!entries) {
+        return []
+    }
+
+    // The data tables require an ID to be present, as in the old version
+    // we acquire that by sorting entries by timestamp and giving them IDs
+    // based on the sort order
+    entries.sort((e1, e2) => e2.timestamp - e1.timestamp);
+    const entriesWithIDs = entries.map((entry, i) => {
+        return {
+            ...entry,
+            id: i,
+            notes: (entry.notes || '<i>Edit</i>'),
+            zhuyin: convert2Zhuyin(entry.pinyin),
+        }
+    })
+
+    return entriesWithIDs
+}
+
+const NOTES_COLUMN = 7;
+
+async function showListIsEmptyNotice(entries) {
     if (entries.length === 0) {
         $('#nodata').show();
     } else {
@@ -37,7 +55,7 @@ function showListIsEmptyNotice() {
     }
 }
 
-function disableButtons() {
+function disableButtons(entries) {
     if (entries.length === 0) {
         $('#saveList').prop('disabled', true);
         $('#selectAll').prop('disabled', true);
@@ -80,10 +98,16 @@ function copyEntryForSaving(entry) {
     return result;
 }
 
-$(document).ready(function () {
+$(document).ready(async function () {
+    const config = await getConfig()
+    const entries = await getEntries()
 
-    showListIsEmptyNotice();
-    disableButtons();
+    let showZhuyin = config['zhuyin'] === 'yes';
+    let showJyutping = config['jyutpingEnabled'] || 'yes';
+    let showPinyin = config['pinyinEnabled'] || 'yes';
+
+    showListIsEmptyNotice(entries);
+    disableButtons(entries);
 
     let wordsElement = $('#words');
     let invalidateRow;
@@ -131,7 +155,7 @@ $(document).ready(function () {
 
         $('#editNotes').modal('hide');
         invalidateRow().draw();
-        localStorage['wordlist'] = JSON.stringify(copyEntriesForSaving(entries));
+        config['wordlist'] = JSON.stringify(copyEntriesForSaving(entries));
     });
 
     $('#saveList').click(function () {
@@ -163,9 +187,8 @@ $(document).ready(function () {
                 content += '\t';
             }
             content += entry.definition;
-            content += '\t';
             content += entry.notes.replace('<i>Edit</i>', '').replace(/[\r\n]/gm, ' ');
-            content += '\r\n';
+            content += '\n';
         }
 
         let saveBlob = new Blob([content], { "type": "text/plain" });
@@ -180,7 +203,7 @@ $(document).ready(function () {
 
         entries = table.rows().data().draw(true);
 
-        localStorage['wordlist'] = JSON.stringify(copyEntriesForSaving(entries));
+        config['wordlist'] = JSON.stringify(copyEntriesForSaving(entries));
 
         showListIsEmptyNotice();
         disableButtons();

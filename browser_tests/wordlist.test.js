@@ -148,7 +148,7 @@ test("pressing wordlist button shows popup and adds the word to the wordlist", a
         ])
     expect(oddInnerHtml).toEqual(
         [
-            "<td class=\"sorting_1\">0</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be</td><td><i>Edit</i></td>",
+            "<td class=\"sorting_1\">0</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have; there is/(bound form) having; with; -ful; -ed; -al (as in 有意[you3yi4] intentional)</td><td><i>Edit</i></td>",
             "<td class=\"sorting_1\">2</td><td>有</td><td>有</td><td>yǒu</td><td>jau5</td><td>to have/there is/there are/to exist/to be/being/a surname/to possess/to own/used in courteous phrases expressing causing trouble/to be betrothed/to be married/to be pregnant/many/to be rich/to have money/abundant/wealthy</td><td><i>Edit</i></td>",
         ])
 })

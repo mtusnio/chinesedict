@@ -1,14 +1,9 @@
-# Mandarin & Cantonese Pop-Up dictionary
-
-A fork of the (https://github.com/cschiller/zhongwen)[Zhongwen] extension.
-Support for Cantonese
-(https://cantonese.org/download.html)[CC-Canto] dictionary and jyutping display
-was added.
+# Chinese-English Popup Dictionary - Mandarin & Cantonese
 
 ## Contributions
 
 If you would like to contribute to the project feel free to open issues or,
-even better, pull requests.
+even better, pull requests. See [CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
 
 ## Highlights
 
@@ -71,8 +66,7 @@ your experience.
 * <kbd>Alt</kbd> + <kbd>3</kbd> takes you to [Dict.cn](https://dict.cn).
 * <kbd>Alt</kbd> + <kbd>4</kbd> uses [iCIBA](https://www.iciba.com).
 * <kbd>Alt</kbd> + <kbd>5</kbd> looks up the word in the [MDBG dictionary](https://mdbg.net).
-* <kbd>Alt</kbd> + <kbd>6</kbd> takes you to [JuKuu](https://jukuu.com).
-* <kbd>Alt</kbd> + <kbd>7</kbd> takes you to [MoeDict](https://moedict.tw).
+* <kbd>Alt</kbd> + <kbd>6</kbd> takes you to [MoeDict](https://moedict.tw).
 * <kbd>T</kbd> is for looking up example sentences at [Tatoeba](https://tatoeba.org).
 
 ### Misc
@@ -85,6 +79,18 @@ your experience.
 - <kbd>W</kbd> to play the Mandarin pronunciation of the selected character or phrase
   - For Linux users the TTS is not available using Brave, Firefox, and Chromium, but should work with Google Chrome.
   - To enable text to speech go to `Extensions` (the jigsaw icon on the top right) > `More actions` (three dots on the right of the `Mandarin + Cantonese` extension) > `Options`. On the `Options` page, scroll to the very bottom and check the box for the option `Enable text-to-speech`.
+
+## Development
+
+### Pupeeter Dependencies
+
+https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#chrome-doesnt-launch-on-linux
+
+### WSL Fonts for test cases
+
+When running WSL you will need Chinese font to be available for the browser tests to pass, see below
+
+https://help.accusoft.com/PrizmDoc/v12.2/HTML/Installing_Asian_Fonts_on_Ubuntu_and_Debian.html
 
 ## Legal
 This program is free software; you can redistribute it and/or
@@ -102,6 +108,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ---
+
+*Copyright (C) 2024 Michal Tusnio*
 
 Original extension & documentation
 *Copyright (C) 2019 Christian Schiller*

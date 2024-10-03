@@ -29,7 +29,7 @@
   "scripts": {
     "lint": "npx eslint --fix *.js js/options.js js/wordlist.js js/zhuyin.js",
     "csslint": "stylelint css/content.css css/wordlist.css",
-    "zip": "zip -r dictionary.zip ./* -x '*.git*' -x add_jyutping.py -x package.json -x package-lock.json",
+    "zip": "./scripts/create-bundle.sh",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --maxConcurrency=1 --maxWorkers=1 --testTimeout 20000",
     "test-unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathIgnorePatterns='browser_tests/*'",
     "test-browser": "node --experimental-vm-modules node_modules/jest/bin/jest.js --maxConcurrency=1 --maxWorkers=1 --testTimeout 20000 --testPathPattern='browser_tests/*'"

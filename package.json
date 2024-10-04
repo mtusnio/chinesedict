@@ -1,7 +1,7 @@
 {
   "name": "chinesedict",
   "version": "2.0.0",
-  "description": "Mandarin and Cantonese Pop-Up Dictionary",
+  "description": "Chinese Popup Dictionary - Mandarin & Cantonese",
   "type": "module",
   "repository": {
     "type": "git",

@@ -31,6 +31,9 @@ global.chrome = {
         },
         setBadgeText: () => {
             throw Error("Not Implemented");
+        },
+        setIcon: () => {
+            throw Error("Not Implemented");
         }
     },
     storage: {

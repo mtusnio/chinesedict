@@ -56,12 +56,12 @@ chrome.runtime.onInstalled.addListener(async () => {
     await setup.install()
 });
 
-chrome.action.onClicked.addListener(setup.activateExtensionToggle);
+chrome.action.onClicked.addListener(setup.toggleExtension);
 
-chrome.tabs.onActivated.addListener(activeInfo => actions.enableTab(activeInfo.tabId));
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+chrome.tabs.onActivated.addListener(async (activeInfo) => await actions.enableTab(activeInfo.tabId));
+chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo) {
     if (changeInfo.status === 'complete') {
-        actions.enableTab(tabId);
+        await actions.enableTab(tabId);
     }
 });
 

@@ -4,7 +4,7 @@ const EXTENSION_PATH = './';
 const EXTENSION_ID = "aoofnmlljjgifabglpelnbmipdfnfflk"
 const ZHONGWEN_WINDOW_SELECTOR = "#zhongwen-window"
 
-async function setupBrowser() {
+async function setupBrowser(userDataDir) {
     let headless = true
     let dumpio = false
     // if (process.env["HEADLESS"]) {
@@ -23,6 +23,7 @@ async function setupBrowser() {
         headless: headless,
         devTools: true,
         dumpio: dumpio,
+        userDataDir: userDataDir,
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
             `--load-extension=${EXTENSION_PATH}`,

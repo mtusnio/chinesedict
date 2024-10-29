@@ -42,11 +42,16 @@
     "page": "options.html",
     "open_in_tab": true
   },
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
   "permissions": [
     "contextMenus",
     "tabs",
     "storage",
-    "clipboardWrite"
+    "clipboardWrite",
+    "scripting"
   ],
   "commands": {
     "_execute_action": {

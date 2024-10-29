@@ -11,7 +11,8 @@ global.chrome = {
             addListener: () => { throw Error("Not Implemented"); },
             onUpdated: () => { throw Error("Not Implemented"); }
         },
-        sendMessage: () => { throw Error("Not Implemented"); }
+        sendMessage: () => { throw Error("Not Implemented"); },
+        query: () => { throw Error("Not Implemented"); }
     },
 
     runtime: {
@@ -57,6 +58,10 @@ global.chrome = {
         onClicked: {
             addListener: () => { throw Error("Not implemented") }
         }
+    },
+    scripting: {
+        insertCSS: () => { throw Error("Not implemented") },
+        executeScript: () => { throw Error("Not implemented") },
     }
 };
 

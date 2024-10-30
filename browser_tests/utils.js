@@ -17,9 +17,8 @@ async function setupBrowser(userDataDir) {
         dumpio = process.env["DUMPIO"] === "true"
     }
 
-
     const browser = await puppeteer.launch({
-        browser: "chrome",
+        browser: process.env["BROWSER"] || "chrome",
         headless: headless,
         devTools: true,
         dumpio: dumpio,

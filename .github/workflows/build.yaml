@@ -3,7 +3,7 @@ name: Run Tests
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   pull_request:
     types: [opened, synchronize]
 
@@ -15,7 +15,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
       - run: npm ci
       - run: npm run test-unit
   script-tests:
@@ -35,14 +35,14 @@ jobs:
         working-directory: ./scripts
         run: |
           python -m unittest
-  browser-tests:
+  browser-tests-chrome:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
       - run: npm ci
       - run: npx @puppeteer/browsers install chrome@stable
       - name: Browser tests
@@ -51,3 +51,19 @@ jobs:
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
           npm run test-browser
+  browser-tests-firefox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - run: npm ci
+      - run: npx @puppeteer/browsers install firefox@stable
+      - name: Browser tests
+        run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+          BROWSER=firefox run test-browser

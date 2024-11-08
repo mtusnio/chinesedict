@@ -5,7 +5,7 @@
   "version": "2.0.0",
   "author": "Michal Tusnio",
   "homepage_url": "https://github.com/mtusnio/chinesedict",
-  "description": "Dual Mandarin & Cantonese (Jyutping) popup dictionary for those learning both",
+  "description": "Dual Mandarin & Cantonese (Jyutping) popup dictionary for those learning one or both",
   "icons": {
     "16": "images/logo-16x16.png",
     "48": "images/logo-48x48.png",

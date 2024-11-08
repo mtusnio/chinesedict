@@ -394,9 +394,7 @@ async function copyToClipboard(data) {
 
 function ttsAny(data, language) {
     let utterance = new SpeechSynthesisUtterance();
-    // Set the text to be spoken
     utterance.text = data;
-    // Set the language and voice for Mandarin
     utterance.lang = language;
     utterance.voice = synth.getVoices().find((voice) => voice.lang === language);
     synth.speak(utterance);

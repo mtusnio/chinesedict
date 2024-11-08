@@ -11,7 +11,7 @@ FILENAME=chinese-dict-$TYPE.zip
 
 rm ./$FILENAME || true
 echo "Zipping all files apart from manifest.json"
-find . | grep -P '(\.png|\.html|\.css|(^(?!.*\.test\.js)).*\.js$|\./data)' | grep -v -P '(node_modules|browser_tests|mock-extension-apis.js|eslint)' | zip -@ chinese-dict.zip
+find . | grep -P '(\.png|\.html|\.css|(^(?!.*\.test\.js)).*\.js$|\./data)' | grep -v -P '(node_modules|browser_tests|mock-extension-apis.js|eslint)' | zip -@ $FILENAME
 EXT_PATH=$(pwd)
 
 echo "Cleaning up tmp"

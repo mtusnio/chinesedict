@@ -25,7 +25,7 @@ echo "Generating manifest.json"
 mkfifo manifest.json
 cat $EXT_PATH/manifest.json | egrep -v '"key"' > ./manifest-file.json
 
-if [[ $TYPE == "firefox " ]]; then
+if [[ $TYPE == "firefox" ]]; then
     echo "Performing firefox substitution"
     sed -i 's/"service_worker": "worker.js"/"scripts": [ "worker.js" ]/g' ./manifest-file.json
 fi

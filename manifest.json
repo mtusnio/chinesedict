@@ -57,5 +57,10 @@
     "_execute_action": {
       "description": "Enable/Disable Dictionary"
     }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "32e79b4f-2b64-4218-908d-8a44f21f392f"
+    }
   }
 }

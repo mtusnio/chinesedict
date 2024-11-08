@@ -43,43 +43,6 @@ your experience.
 - Third tone syllables are shown in green.
 - Forth tone syllables are shown in blue.
 
-## Keyboard Shortcuts
-
-### Navigation
-
-- <kbd>N</kbd> to move forward one word
-- <kbd>B</kbd> to move back one word
-- <kbd>M</kbd> to move forward one *character* - eg. it will display the second
-  character in a two character word.
-- <kbd>X</kbd> and move the window up and down respectively
-- <kbd>A</kbd> moves the window to
-
-### Word List
-
-- <kbd>Alt</kbd> + <kbd>W</kbd> to open the word list.
-- <kbd>R</kbd> to save a word to the list.
-
-### Online dictionaries
-
-* <kbd>Alt</kbd> + <kbd>1</kbd> looks up the selected word using [LINE Dict](https://dict.naver.com/linedict/zhendict).
-* <kbd>Alt</kbd> + <kbd>2</kbd> lets you look up the pronunciation on [Forvo](https://forvo.com).
-* <kbd>Alt</kbd> + <kbd>3</kbd> takes you to [Dict.cn](https://dict.cn).
-* <kbd>Alt</kbd> + <kbd>4</kbd> uses [iCIBA](https://www.iciba.com).
-* <kbd>Alt</kbd> + <kbd>5</kbd> looks up the word in the [MDBG dictionary](https://mdbg.net).
-* <kbd>Alt</kbd> + <kbd>6</kbd> takes you to [MoeDict](https://moedict.tw).
-* <kbd>T</kbd> is for looking up example sentences at [Tatoeba](https://tatoeba.org).
-
-### Misc
-
-- <kbd>S</kbd> to add a word to your Skritter queue. You will need to be logged into Skritter for this to work.
-- <kbd>C</kbd> on the keyboard to copy the text together with dictionary
-  entries into your clipboard. This is useful if you then want to insert them
-  into Anki or your own words Spreadsheet.
-- <kbd>E</kbd> to play the Cantonese pronunciation of the selected character or phrase
-- <kbd>W</kbd> to play the Mandarin pronunciation of the selected character or phrase
-  - For Linux users the TTS is not available using Brave, Firefox, and Chromium, but should work with Google Chrome.
-  - To enable text to speech go to `Extensions` (the jigsaw icon on the top right) > `More actions` (three dots on the right of the `Mandarin + Cantonese` extension) > `Options`. On the `Options` page, scroll to the very bottom and check the box for the option `Enable text-to-speech`.
-
 ## Development
 
 ### Pupeeter Dependencies

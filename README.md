@@ -84,6 +84,10 @@ your experience.
 
 ### Pupeeter Dependencies
 
+```sh
+npx @puppeteer/browsers install chrome@stable
+npx @puppeteer/browsers install firefox@stable
+```
 https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#chrome-doesnt-launch-on-linux
 
 ### WSL Fonts for test cases

@@ -46,6 +46,30 @@ test("pressing the grammar shortcut loads up grammar wiki", async () => {
     expect(grammarPage).not.toBeNull()
 })
 
+
+test("pressing the grammar shortcut when non-first element has grammar wini loads up grammar wiki", async () => {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/test-cases.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
+
+    const targetSelector = '#second-element-grammar-wiki #characters .first'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    const windowHTML = await utils.getZhongwenWindowContent(page)
+
+    expect(windowHTML).toEqual("<span class=\"w-hanzi-small\">二世</span>&nbsp;<span class=\"w-pinyin-small tone4\">èr</span>&nbsp;<span class=\"w-pinyin-small tone4\">shì</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">ji6 sai3</span><br><span class=\"w-def-small\">the Second (of numbered kings)/second generation (e.g. Chinese Americans)</span><br><span class=\"w-hanzi-small\">二</span>&nbsp;<span class=\"w-pinyin-small tone4\">èr</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">ji6</span><br><span class=\"w-def-small\">two/2/(Beijing dialect) stupid</span><br><br><span class=\"grammar\">Press \"g\" for grammar and usage notes.</span><br><br><span class=\"w-hanzi-small\">二</span>&nbsp;<span class=\"w-pinyin-small tone4\">èr</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">ji6</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">two/(Beijing dialect) stupid/twice/second/vice-/once more / again/double/different</span><br>")
+
+    await page.keyboard.press("g")
+
+    const grammarPage = await utils.findOpenedPage(browser, `https://resources.allsetlearning.com/chinese/grammar/%E4%BA%8C`, 10000)
+    expect(grammarPage).not.toBeNull()
+})
+
+
 test("pressing the skritter shortcut loads up legacy skritter", async () => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 720 });

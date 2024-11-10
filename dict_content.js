@@ -494,6 +494,7 @@ async function makeHtml(result, showToneColors) {
             }
 
             texts.push({
+                grammar: entry.grammar,
                 simplified: entry.simplified,
                 traditional: entry.traditional,
                 pronunciation: {
@@ -975,10 +976,9 @@ async function onKeyDown(keyDown) {
 
         case keyCodes['g']:
             if (config.grammar !== 'no' && savedSearchResults.grammar) {
-                let sel = encodeURIComponent(window.getSelection().toString());
+                const entry = savedSearchResults.find((element) => element.grammar === true)
 
-                // https://resources.allsetlearning.com/chinese/grammar/%E4%B8%AA
-                let allset = 'https://resources.allsetlearning.com/chinese/grammar/' + sel;
+                let allset = 'https://resources.allsetlearning.com/chinese/grammar/' + entry.simplified;
 
                 chrome.runtime.sendMessage({
                     type: 'open',

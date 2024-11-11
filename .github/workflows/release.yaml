@@ -1,14 +1,31 @@
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Extensions version to release"
 
-name: Create Release
-
+name: Release
 jobs:
+  bump-manifest:
+    name: Bump manifest version and add tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify tag
+        run: |
+          echo "${{ github.event.inputs.version }}" | grep -P '^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Bump manifest file
+        run: |
+          jq ".version = \"${GITHUB_REF##*v}\"" ./manifest.json | sponge ./manifest.json
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Release version ${{ github.event.inputs.version }}
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    needs: bump-manifest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

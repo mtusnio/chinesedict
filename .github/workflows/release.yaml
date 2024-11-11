@@ -23,15 +23,6 @@ jobs:
         with:
           commit_message: Release version ${{ github.event.inputs.version }}
           tagging_message: "v${{ github.event.inputs.version }}"
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    needs: bump-manifest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Install moreutils
-        run: sudo apt-get install -y moreutils
       - name: Create chrome & firefox release bundles
         run: |
           ./scripts/create-bundle.sh chrome

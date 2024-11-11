@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Install moreutils
+        run: sudo apt-get install -y moreutils
       - name: Create chrome & firefox release bundles
         run: |
           ./scripts/create-bundle.sh chrome

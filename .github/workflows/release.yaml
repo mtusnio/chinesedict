@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Bump manifest file
         run: |
-          jq ".version = \"${GITHUB_REF##*v}\"" ./manifest.json | sponge ./manifest.json
+          jq ".version = \"${{ github.event.inputs.version }}\"" ./manifest.json | sponge ./manifest.json
       - name: Commit and push
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

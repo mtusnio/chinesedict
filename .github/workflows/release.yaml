@@ -22,6 +22,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Release version ${{ github.event.inputs.version }}
+          tagging_message: "v${{ github.event.inputs.version }}"
   release:
     name: Create Release
     runs-on: ubuntu-latest

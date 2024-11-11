@@ -69,6 +69,29 @@ test("pressing the grammar shortcut when non-first element has grammar wini load
     expect(grammarPage).not.toBeNull()
 })
 
+test("pressing the grammar shortcut on a non-grammar element has no effect", async () => {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 720 });
+    await page.goto(`file://${path.resolve()}/browser_tests/testdata/test-cases.html`, { waitUntil: ['domcontentloaded', "networkidle2"] });
+    await page.bringToFront();
+
+    await utils.toggleExtension(worker)
+    await utils.hideHelp(page)
+
+    const targetSelector = '#different-simplified-and-traditional #simplified .first'
+    await page.waitForSelector(targetSelector, { timeout: 6000 })
+    await page.locator(targetSelector).hover();
+    const windowHTML = await utils.getZhongwenWindowContent(page)
+
+    expect(windowHTML).toEqual("<span class=\"w-hanzi-small\">機會</span>&nbsp;<span class=\"w-hanzi-small\">机会</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;<span class=\"w-pinyin-small tone4\">huì</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1 wui6</span><br><span class=\"w-def-small\">opportunity/chance/occasion/CL:個|个[ge4]</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">Jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><br><span class=\"w-def-small\">surname Ji</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><br><span class=\"w-def-small\">(bound form) machine; mechanism/(bound form) aircraft/(bound form) an opportunity/(bound form) crucial point; pivot/(bound form) quick-witted; flexible/(bound form) organic</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">(noun) device</span><br><span class=\"w-hanzi-small\">機</span>&nbsp;<span class=\"w-hanzi-small\">机</span>&nbsp;<span class=\"w-pinyin-small tone1\">jī</span>&nbsp;&nbsp;&nbsp;<span class=\"w-pinyin-small\">gei1</span><span style=\"float: right\" class=\"w-pinyin-small\">Cant.</span><br><span class=\"w-def-small\">machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic M: 台tái [台]/witty/handphone</span><br>")
+
+    await page.keyboard.press("g")
+
+    const grammarPage = await utils.findOpenedPage(browser, `https://resources.allsetlearning.com/chinese/grammar/%E6%9C%BA`, 10000)
+    expect(grammarPage).toBeNull()
+})
+
+
 
 test("pressing the skritter shortcut loads up legacy skritter", async () => {
     const page = await browser.newPage();

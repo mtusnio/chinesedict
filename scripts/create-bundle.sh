@@ -27,9 +27,11 @@ cat $EXT_PATH/manifest.json | egrep -v '"key"' > ./manifest-file.json
 
 if [[ $TYPE == "firefox" ]]; then
     echo "Performing firefox substitution"
-    sed -i 's/"service_worker": "worker.js"/"scripts": [ "worker.js" ]/g' ./manifest-file.json
+    jq 'del(.background.service_worker)' ./manifest-file.json | sponge ./manifest-file.json
+    jq '.background.scripts = [ "worker.js" ]' ./manifest-file.json | sponge ./manifest-file.json
+
     # Extension names have to be 45 characters long in Firefox workshop
-    sed -i 's/"name": "Chinese Popup Dictionary - Mandarin \& Cantonese"/"name": "Chinese Popup Dictionary Mandarin \& Cantonese"/g' ./manifest-file.json
+    jq '.name = "Chinese Popup Dictionary Mandarin & Cantonese"' ./manifest-file.json | sponge ./manifest-file.json
 fi
 
 cat ./manifest-file.json > ./manifest.json &

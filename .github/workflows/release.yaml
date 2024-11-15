@@ -1,30 +1,17 @@
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Extensions version to release"
+  push:
+    tags:
+      - "v*"
 
-name: Release
+name: Create Release
+
 jobs:
-  bump-manifest:
-    name: Prepare a release
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Verify tag
-        run: |
-          echo "${{ github.event.inputs.version }}" | grep -P '^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
-      - name: Install moreutils
-        run: sudo apt-get install -y moreutils
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Bump manifest file
-        run: |
-          jq ".version = \"${{ github.event.inputs.version }}\"" ./manifest.json | sponge ./manifest.json
-      - name: Commit and push
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Release version ${{ github.event.inputs.version }}
-          tagging_message: "v${{ github.event.inputs.version }}"
       - name: Create chrome & firefox release bundles
         run: |
           ./scripts/create-bundle.sh chrome

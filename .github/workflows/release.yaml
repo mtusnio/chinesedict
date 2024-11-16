@@ -10,6 +10,8 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Install moreutils
+        run: sudo apt-get install -y moreutils
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Create chrome & firefox release bundles

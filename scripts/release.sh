@@ -44,5 +44,7 @@ jq ".version = \"$RELEASE_TAG\"" ./manifest.json | sponge ./manifest.json
 
 git add manifest.json
 git commit -m "Manifest release version $RELEASE_TAG"
+git tag v$RELEASE_TAG
 
-
+git push
+git push origin tag v$RELEASE_TAG

@@ -18,21 +18,31 @@ fi
 
 set -e
 
-if [[ `git status --porcelain` ]]; then
-    echo "Changes in local repository, repository needs to be clean. Aborting"
+if [[ `git diff --cached -- manifest.json` ]]; then
+    echo "Manifest.json in the index cannot be modified. Aborting"
     exit 1
 fi
 
-if [[ `git branch --show-current` != "main" ]]; then
+if [[ `git diff -- manifest.json` ]]; then
+    echo "Manifest.json in the working directory is already modified. Aborting"
+    exit 1
+fi
+
+if [[ `git rev-parse --abbrev-ref HEAD` != "main" ]]; then
     echo "Local branch is not main. Aborting"
     exit 1
 fi
 
 git fetch origin
 
-if [[ `git diff origin/main main` ]]; then
-    echo "Local branch does not match origin main. Aborting"
+if [[ `git diff origin/main main -- manifest.json` ]]; then
+    echo "Local manifest.json does not match origin main. Aborting"
     exit 1
 fi
 
-jq ".version = \"$RELEASE_TAG"" ./manifest.json | sponge ./manifest.json
+jq ".version = \"$RELEASE_TAG\"" ./manifest.json | sponge ./manifest.json
+
+git add manifest.json
+git commit -m "Manifest release version $RELEASE_TAG"
+
+

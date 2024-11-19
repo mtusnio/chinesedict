@@ -51,7 +51,8 @@
     "tabs",
     "storage",
     "clipboardWrite",
-    "scripting"
+    "scripting",
+    "unlimitedStorage"
   ],
   "commands": {
     "_execute_action": {

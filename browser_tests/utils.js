@@ -26,7 +26,8 @@ async function setupBrowser(userDataDir) {
         args: [
             `--disable-extensions-except=${EXTENSION_PATH}`,
             `--load-extension=${EXTENSION_PATH}`,
-            `--window-size=1280,720`
+            `--window-size=1280,720`,
+            ...(process.env.CI ? ["--no-sandbox", "--disable-dev-shm-usage"] : []),
         ]
     });
 

@@ -12,7 +12,7 @@ Cantonese language are available:
 
 - Supports both traditional and simplified characters.
 - Includes both the [CEDICT](https://cc-cedict.org/wiki) Chinese English
-  dictionary as well as https://cantonese.org/download.html)[CC-Canto]
+  dictionary as well as [CC-Canto](https://cantonese.org/download.html)
   dictionary.
 - Shows Jyutping and Pinyin alongside characters.
 - As a learning aid it uses different colors for displaying the Pinyin

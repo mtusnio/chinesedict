@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Chinese Popup Dictionary - Mandarin & Cantonese",
   "short_name": "Chinese Dictionary",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "author": "Michal Tusnio",
   "homepage_url": "https://github.com/mtusnio/chinesedict",
   "description": "Dual Mandarin & Cantonese (Jyutping) popup dictionary for those learning one or both",
